@@ -1,0 +1,22 @@
+TPS 1
+1. Alex Yanez
+https://ardupilot.org/dev/docs/debugging-with-gdb-using-vscode.html
+https://code.visualstudio.com/docs/cpp/launch-json-reference
+https://code.visualstudio.com/docs/cpp/cpp-debug
+
+TPS 2
+1. compile with the -g flag, and then debug the executable with gdb
+2. gdb ./punish
+3. type "run"
+4. b punishment.c:18
+5. the "next" command
+6. print (variablename)
+7. "continue"
+8. "quit"
+
+TPS 3
+1. 4 variables, 2 pointers: px and py
+2. garbage
+3. initializing the variables to 0
+8. The address of arr is the same as the address of arr[0], and arr itself. This is because arr isn't really a pointer,
+it's kind of like a combo of a pointer and a normal variable, so it is stored in the same place.

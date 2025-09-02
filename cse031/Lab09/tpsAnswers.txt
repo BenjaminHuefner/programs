@@ -1,0 +1,31 @@
+TPS 1
+    4. 32
+    5. There are three types, r, i, and j. add and sub are r instructions. bne and beq are i instructions. j and jal are j instructions.
+    6. 
+        a. This is addi, an I format instruction. These kinds of instructions have 4 fields, opcode, rs, rt, and immediate.
+        b. 8, $0, or 0 in hex, $s0, or 10 in hex, 25 in decimal is 19 in hex
+        c. binary: 001000 00000 10000 0000000000011001  hex: 20100019
+    7.
+        a. 0230402a, 0000 0010 0011 0000 0100 0000 0010 1010
+        b. this is an r-format instruction, since its opcode is 0. 
+        These kinds of instructions have 6 fields: opcode, rs, rt, rd, shamt, func.
+        c. 0 11 10 8 0 2a
+        d. Because the opcode was 0, and the func field was 2a, that means the instruction is slt. 
+        The destination register is rd, then the instruction checks if rs is less than rt.
+        e. This instruction is slt $t0, $s1, $s0. This is the same.
+    8.
+        a. i format
+        b. opcode:5 rs:8 rt:0
+        c. the LESS label at address 0x0040001c
+        d. there is not enough space in the instruction to hold the whole address
+        e. We can't store a whole address in here, so instead we store an offset from the target instruction. In this case, 1.
+        f. binary: 000101 01000 00000 000000000000001 Hex: 15000001. This matches
+    9.
+        a. this is j format, with 2 fields.
+        b. 2
+        c. this jumps to the GREQ label at address at 0x00400030
+        d. the address field has 26 bits. We need to construct a 32 bit address out of the given 26 bits.
+        The right 2 bits of an instruction address will always be 00, so we will concatenate 00 to the end.
+        The first 4 bits will be copied from the program counter. This is necessary to give all instructions a 6 bit opcode.
+        in binary, our address field will be 00 0001 0000 0000 0000 0000 1100
+        e. binary: 000010 00 0001 0000 0000 0000 0000 1100 Hex: 0810000c. This matches.

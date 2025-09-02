@@ -1,0 +1,16 @@
+TPS 1
+    1. functions return a value, and procedures do not, and either can be a method when bound to a class
+    4. j SUM points to line 20, which places the sum of n and m into v0
+    5. this would work, but you would not be able to call the Sum subroutine again, as it would always return to the same spot.
+    6. It's supposed to be saved at line 11 into $ra. The value being saved is 0, which does not make sense.
+    7. When you run the program, it has an error
+    8. The correct return address is 4194336, for line 14.
+    9. The return address changed
+    10. The new address is 4194344, which works correctly
+    11. jal
+TPS 2
+    1. This will print 38
+    3. When main calls sum, it knows where to return to because the return address was stored in $ra, but when sum calls sub,
+    $ra is overwritten.
+    5. The original value in $s0, x,  is overwritten. 
+    This is a problem because the line after Sum is called needs to use x, which has been overwritten.

@@ -1,0 +1,15 @@
+TPS 1
+    1. I think it's going to print 2, and nothing else
+    2. I think its going to print 2
+    3. It printed 44434241
+    4. the next print statement printed 2. I'm not sure why
+    5. 
+        a. 1 array is allocated
+        b. Yes they are pointing to the same location
+    6. The addresses increase by 4, meaning its storing space for ints
+    8. The addresses increase by 1, This means that all four c's are being stored in 4 bytes, or 1 int
+    10. When the index of an array is incremented, the amount it is incremented is based on the variable type of the array
+TPS 2
+    1. This allocates space for a n x n 2D array
+    2. *(arr+i)
+    4. We need to pass the size of the array, so that we can prevent printing out of bounds

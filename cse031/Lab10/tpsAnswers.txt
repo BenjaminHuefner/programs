@@ -1,0 +1,28 @@
+TPS 1
+    1. Cache is a small secondary memory which the processor can access much more quickly than the full memory. 
+    We need cache so that we aren't wasting time going to the full memory for commonly used data.
+    4. We need 4 bits. The number of bits needed is log base 2 of the block size (in bytes), rounded up.
+    1 byte would't need an offset, because there's only the one block.
+    5. We need 6 index bits. The number of bits needed is log base 2 of the number of blocks, rounded up.
+    6. Yes, just multiply number of blocks * block size
+    7. Left over bits are a tag.
+    They let you keep track of where the block came from, since different blocks can map to the same index in the cache.
+    8.
+        a. 1048576 unique addresses, or 1MB
+        b. 3 offset bits
+        c. 16
+        d. 4 index bits
+        e. 13 tag bits
+        g. 1+1+13+ 8*8= 79 bits per row
+TPS 2
+    1. Direct-mapped caches have a problem with conflict misses.
+    3. there are 256 sets, so we need 8 index bits. The number of sets is equal to number of blocks divided by associativity.
+    The number of index bits is log base 2 of the number of sets, rounded up.
+    4.
+        a. 1048576 unique addresses, or 1MB
+        b. 3 offset bits
+        c. 16
+        d. 8
+        e. 3 index bits
+        f. 14 tag bits
+        h. 1+1+14+8*8= 80 bits per row

@@ -1,0 +1,22 @@
+TPS 1
+    1. MIPS Assembler and Runtime Simulator
+    5.
+        a. using the open icon
+        b. using the wrench and screwdiver icon
+        c. the run icon, a green circle with a triangle in it
+        d. no
+        e. to run a single step usre the icon that looks like the run icon but with a 1 next to it
+        f. reset using the icon with the two triangles facing to the left
+TPS 2
+    1. .data is the data you're initializing in the memory data segment to be used by the program
+       .word stores the given value in a word, or 4 bytes
+       .text is the instructions for the program to execute, the code segment in memory
+    2. line 10 is the start of the recursive fibonacci subroutine, which will be broken out of once it has been run enough times
+    3. line 15 jumps back to the fib subroutine
+    4. Checking the Bkpt checkbox next to line 15 in the Execute tab
+    5. clicking the run or step icons, the ones i mentioned before, will start the program again
+    6. Look at the regiters tab. double click the value in the value column in the registers tab to change it, and press enter
+    7. n is at address 0x10010000.
+    8. syscall takes in a number (via a given register) and does certain system outputs depending on the number. 
+    an input of 1, like is given in the first syscall will print the value in $a0. 
+    an input of 10 will exit the program, like is used in our second syscall.

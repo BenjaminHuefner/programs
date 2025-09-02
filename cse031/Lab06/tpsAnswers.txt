@@ -1,0 +1,15 @@
+TPS 1
+    1. Text: 0x0040000 Data:0x10010000
+    2. The Basic code can be converted directly to machine code, 
+    whereas the source code needs to first be assembled into basic code in order to run
+    3. 4 bytes
+    4. 8 columns
+    5. in each column, the address directly below the current entry is 32 bytes away. 
+    the addresses to the left and right are 4 bytes apart
+    6. add a label for m underneath n in the data segment with .word 20
+    7. 0x10010004
+    9. 0x10010008,0x1001000c,0x10010010,0x10010014
+    10. This makes sense because the values stored in a little-endian way.
+    12. la $t3,n this loads the address of n into $t3.
+TPS 2
+    1.You don't need basic instructions for all of the inequalities, because you can make all of them using slt, beq, and bne

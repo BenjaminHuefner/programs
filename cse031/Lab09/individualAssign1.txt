@@ -1,0 +1,72 @@
+Line 7:
+
+MIPS- addi $s0, $zero, -15
+
+fields- opcode: addi, rs: $zero, rt: $s0, immediate: -15
+binary- opcode: 001000, rs: 00000, rt: 10000, immediate: 1111111111110001
+Machine code binary- 0010 0000 0001 0000 1111 1111 1111 0001
+
+Machine code hex- 0x2010fff1
+
+machine code binary- 0010 0000 0001 0000 1111 1111 1111 0001
+opcode- 001000 = addi = i format
+field representation- opcode: 001000, rs: 00000, rt: 10000, immediate: 1111111111110001
+fields MIPS- opcode: addi, rs: $zero, rt: $s0, immediate: -15
+
+MIPS- addi $s0, $zero, -15
+
+
+Line 14:
+
+MIPS- slt $t0, $s0, $s1
+
+fields- opcode: slt, rs: $s0, rt: $s1, rd: $t0, shamt: 0, func: slt
+binary- opcode: 000000, rs: 10000, rt: 10001, rd: 01000, shamt: 00000, func: 10 1010 
+Machine code binary- 0000 0010 0001 0001 0100 0000 0010 1010
+
+Machine code hex- 0x0211402a
+
+Machine code binary- 0000 0010 0001 0001 0100 0000 0010 1010
+opcode- 000000 = r format
+func- 101010 = slt
+field representation- opcode: 000000, rs: 10000, rt: 10001, rd: 01000, shamt: 00000, func: 10 1010 
+fields MIPS- opcode: slt, rs: $s0, rt: $s1, rd: $t0, shamt: 0, func: slt
+
+MIPS- slt $t0, $s0, $s1
+
+
+Line 17:
+
+MIPS- beq $t0, $zero, LEEQ
+
+fields- opcode: beq, rs: $t0, rt: $0, immediate: offset from instruction at LEEQ = 6
+binary- opcode: 000100, rs: 01000, rt: 00000, immediate: 0000000000000110
+Machine code binary- 0001 0001 0000 0000 0000 0000 0000 0110
+
+Machine code hex- 0x11000006
+
+Machine code binary- 0001 0001 0000 0000 0000 0000 0000 0110
+opcode- 000100 = beq = i format
+field representation- opcode: 000100, rs: 01000, rt: 00000, immediate: 0000000000000110
+fields MIPS- opcode: beq, rs: $t0, rt: $0, immediate: 6
+
+MIPS- beq $t0, $zero, LEEQ
+
+
+Line 20:
+
+MIPS- j GRT
+
+fields- opcode: j address: GRT with the first 4, and last 2 bits removed
+binary- opcode: 000010 address: 0000 0100 0000 0000 0000 0001 11
+Machine code binary- 0000 1000 0001 0000 0000 0000 0000 0111
+
+Machine code hex- 0x08100007
+
+Machine code binary- 0000 1000 0001 0000 0000 0000 0000 0111
+opcode- 000010 = j = j format
+field representation- opcode: 000010 address: 0000 0100 0000 0000 0000 0001 11
+fields MIPS- opcode: j address: 0x0040001c with the first 4 and last 2 bits removed
+
+MIPS- j GRT
+

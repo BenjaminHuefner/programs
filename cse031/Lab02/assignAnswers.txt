@@ -1,0 +1,12 @@
+Assignment 1
+    1. The segmentation fault is at line 25
+    2. The issue is in scanf. For scanf, we need the address of input, not input itself. adding & should fix it
+    3. The bug here is that sum is not being carried over from read_values, so the average is always 0
+    4. To fix this, make sum a pointer in the read_values function
+Assignment 2
+    1. The output is not expected, there is an extra llo! at the end
+    2. The output is still wrong, with an extra hellhi! at the end. 
+    The bug is that these strings are not ending when they're supposed to.
+    I fixed it by adding a null terminating character at the end.
+    3. This output is garbage, but that's expected, because the input was too large.
+    This code works on the assumption that s1 is big enough to store the extra characters, but this input is too large.

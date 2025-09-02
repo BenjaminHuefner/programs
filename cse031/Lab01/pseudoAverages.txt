@@ -1,0 +1,23 @@
+int input,numEven,numOdd,sumOdd,sumEven
+while (input isn't 0){
+    input = userinput
+    if(input != 0){
+        if(input digits add to odd){
+            numOdd++
+            sumOdd+=input
+        }else{
+            numEven++
+            sumEven+=input
+        }
+    }    
+}
+if(!numEven && !numOdd){
+    print "no average"
+}else{
+    if(numEven){
+        print average
+    }
+    if(numOdd){
+        print average
+    }
+}

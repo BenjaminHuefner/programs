@@ -1,0 +1,13 @@
+TPS 1
+1. static(?), stack, and heap. The stack stores objects of dynamic size, the stack is local variables, the rest is stored in the rest.
+2.
+    a. 3, num, ptr, handle
+    b. ptr and handle are pointers, ptr points to an integer, and handle oints to an integer pointer
+    c. stack
+    d. heap
+
+TPS 2
+1. the program defines a node struct, a linked list node with an integer, a float, and the pointer to the next node. 
+It then allocates space for and initializes a node, then intializes its values.
+3. the head pointer points to the first variable in the node, which is iValue. the other variables are stored in order afterwards, one after the other.
+Like an array, the head pointer starts to the first variable, and then you can add to the index to get other variables.

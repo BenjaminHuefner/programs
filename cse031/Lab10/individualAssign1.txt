@@ -1,0 +1,7 @@
+1. Intel(R) Core(TM) i5-2400 CPU @ 3.10GHz
+2. 3, and there is seperate L1 caches for data and instructions
+3. L1 data = 4 x 32 KB, L1 instruction = 4 x 32 KB, L2 = 4 x 256 KB, L3 = 6 MB
+4. 64 bytes
+5. both L1's and L2 are 8-way set associative, and L3 is 12-way set associative
+6. This is Intel 64, so addresses are 64 bits. block size is 64B, so offset is 6 bits. In L1, there are 2000 blocks (32*4*1000/64).
+With 8-way set associativity, there are 250 sets. That makes 8 index bits. The number of tag bits would be 64-8-6, or 50 bits.

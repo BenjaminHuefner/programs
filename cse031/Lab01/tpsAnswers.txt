@@ -1,0 +1,25 @@
+TPS 1
+    1. Partners: 
+    Navroop Kaur
+    Alex Yanez
+    2. Online tutorials
+    https://www.geeksforgeeks.org/cd-command-in-linux-with-examples/
+    https://www.geeksforgeeks.org/rm-command-linux-examples/
+    https://www.geeksforgeeks.org/mv-command-linux-examples/
+TPS 2
+    1. I open a linux terminal through Ubuntu
+        a. I can open up more than one
+        b. If I want to work in different directories at the same time
+    2. ls is the command
+    3. cd .. takes you back one directory, cd on its own takes you all the way back
+    4. mkdir
+TPS 3
+    1. https://www.geeksforgeeks.org/gcc-command-in-linux-with-examples/
+    https://www.wikihow.com/Compile-a-C-Program-Using-the-GNU-Compiler-(GCC)
+    3. gcc [source_file].c -o [executable_name] 
+    4. Seeing if the executable shows up, trying to run it, or using the Werror and Wall commands
+    5. This command compile the program and give the object file as output, which is used to make libraries. 
+    6. -g flag will produce debugging information which the corresponding debugger program
+    7. with this "gcc [source_file].c -o [executable_name]" You can choose the executable name to be cselab1
+    8. this will make a generic a.out file
+    9.  ./a.out

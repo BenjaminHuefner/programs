@@ -1,0 +1,4 @@
+cp /mnt/c/Users/benja/Downloads/Lab12.zip /home/benjaminhuefner/programs/cse100/
+unzip Lab12.zip -d Lab12
+cd Lab12
+cp individualAssign1.txt /mnt/c/Users/benja/Downloads/
