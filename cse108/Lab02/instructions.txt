@@ -1,0 +1,33 @@
+CSE 106 – Lab 2
+
+Without the use of external libraries (you’ll get to use these later, but just not right now), 
+build a static webpage on an appropriate topic of your choice with the following requirements:
+
+1.	Have at least 4 pages, one of which will be the home page that has navigation bar to the additional 3+ pages
+2.	Include an external CSS page that defines your styling for at least
+    a.	Background color or image
+    b.	Text color 
+    c.	Font
+    d.	Font size 
+    e.	Text alignment 
+    f.	Margins and padding
+3.	Include one table that is formatted with a border, margins and padding in your CSS file
+4.	Include one list that is formatted in your CSS file
+5.	Include headings, paragraphs, and images on every page formatted in your CSS file
+6.	Include at least one video on one of the pages
+
+If you are drawing a blank, here are some topics you could pick for your webpage:
+•	Dogs
+•	Cats
+•	Chickens
+•	Vegetables
+•	Fruit
+•	Trucks
+•	Motorcycles
+•	Bicycles
+•	Python
+•	HTML/CSS
+•	Guitars
+•	Climbing
+•	Books
+•	Etc.
