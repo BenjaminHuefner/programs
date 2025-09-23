@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Calculator</title>
+        <link rel="stylesheet" href="calculatorStyle.css">
+        <script src="math.js"></script>
+
+    </head>
+
+    <body>
+        <div>
+            <table>
+                <tr>
+                    <td colspan="3">
+                        <div class="entry" id="output">
+                            0
+                        </div>
+                    </td>
+                    <td>
+                        <button type="button" onclick="c()">C</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <button type="button" onclick="number(7)">7</button>
+                    </td>
+                    <td>
+                        <button type="button" onclick="number(8)">8</button>
+                    </td>
+                    <td>
+                        <button type="button" onclick="number(9)">9</button>
+                    </td>
+                    <td>
+                        <button type="button" onclick="divide()" id="divide">\</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <button type="button" onclick="number(4)">4</button>
+                    </td>
+                    <td>
+                        <button type="button" onclick="number(5)">5</button>
+                    </td>
+                    <td>
+                        <button type="button" onclick="number(6)">6</button>
+                    </td>
+                    <td>
+                        <button type="button" onclick="multiply()" id="multiply">x</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <button type="button" onclick="number(1)">1</button>
+                    </td>
+                    <td>
+                        <button type="button" onclick="number(2)">2</button>
+                    </td>
+                    <td>
+                        <button type="button" onclick="number(3)">3</button>
+                    </td>
+                    <td>
+                        <button type="button" onclick="subtract()" id="subtract">-</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <button type="button" onclick="number(0)">0</button>
+                    </td>
+                    <td>
+                        <button type="button" onclick="decimal()">.</button>
+                    </td>
+                    <td>
+                        <button type="button" onclick="equals()">=</button>
+                    </td>
+                    <td>
+                        <button type="button" onclick="add()" id="add">+</button>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </body>
+</html>
