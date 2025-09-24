@@ -12,10 +12,10 @@ let currState=0;
 
 function update(){
     
-    document.getElementById("add").style.backgroundColor = "#EDEDED";
-    document.getElementById("subtract").style.backgroundColor = "#EDEDED";
-    document.getElementById("multiply").style.backgroundColor = "#EDEDED";
-    document.getElementById("divide").style.backgroundColor = "#EDEDED";
+    document.getElementById("add").style.backgroundColor = "#cad2ffff";
+    document.getElementById("subtract").style.backgroundColor = "#cad2ffff";
+    document.getElementById("multiply").style.backgroundColor = "#cad2ffff";
+    document.getElementById("divide").style.backgroundColor = "#cad2ffff";
 
     if(currState==0){
         document.getElementById("output").innerHTML = num1;
@@ -26,17 +26,19 @@ function update(){
     if(currState==2){
         document.getElementById("output").innerHTML = out;
     }
-    if(currOp==1){
-        document.getElementById("add").style.backgroundColor = "#A6D9FF";
-    }
-    if(currOp==2){
-        document.getElementById("subtract").style.backgroundColor = "#A6D9FF";
-    }
-    if(currOp==3){
-        document.getElementById("multiply").style.backgroundColor = "#A6D9FF";
-    }
-    if(currOp==4){
-        document.getElementById("divide").style.backgroundColor = "#A6D9FF";
+    if(currState==1){
+        if(currOp==1){
+            document.getElementById("add").style.backgroundColor = "#A6D9FF";
+        }
+        if(currOp==2){
+            document.getElementById("subtract").style.backgroundColor = "#A6D9FF";
+        }
+        if(currOp==3){
+            document.getElementById("multiply").style.backgroundColor = "#A6D9FF";
+        }
+        if(currOp==4){
+            document.getElementById("divide").style.backgroundColor = "#A6D9FF";
+        }
     }
     console.log("updating");
 }
@@ -88,6 +90,10 @@ function number(num){
         len2++;
         console.log("num2 = "+num2);
     }
+    if(currState==2){
+        c();
+        number(num);
+    }
     
     update();
 }
@@ -97,12 +103,18 @@ function decimal(){
         if(float1==0){
             float1=1;
             num1+=".0"
+            if (len1==0){
+                len1=1;
+            }
         }
     }
     if(currState==1){
         if(float2==0){
             float2=1;
             num2+=".0"
+            if (len2==0){
+                len2=1;
+            }
         }
     }
     update();
@@ -110,27 +122,39 @@ function decimal(){
 
 function add(){
     if(currState==0 || currState==1){
-        currOp=1;
-        currState=1;
-        console.log("add");
+        if(currOp==1){
+            equals();
+        }else{
+            currOp=1;
+            currState=1;
+            console.log("add");
+        }
     }
     update();
 }
 
 function subtract(){
     if(currState==0 || currState==1){
-        currOp=2;
-        currState=1;
-        console.log("subtract"); 
+        if(currOp==2){
+            equals();
+        }else{
+            currOp=2;
+            currState=1;
+            console.log("subtract"); 
+        }
     }
     update();
 }
 
 function multiply(){
     if(currState==0 || currState==1){
-        currOp=3;
-        currState=1;
-        console.log("multiply");
+        if(currOp==3){
+            equals();
+        }else{
+            currOp=3;
+            currState=1;
+            console.log("multiply");
+        }
     }
     
     update();
@@ -138,30 +162,41 @@ function multiply(){
 
 function divide(){
     if(currState==0 || currState==1){
-        currOp=4;
-        currState=1;
-        console.log("divide");
+        if(currOp==4){
+            equals();
+        }else{
+            currOp=4;
+            currState=1;
+            console.log("divide");
+        }
     }
     update();
 }
 
 function equals(){
+    let addend= num1;
     if(currState==1){
+        addend=num1;
+    }else{
+        addend=out;
+    }
+
+    if(currOp!=0){
         if (currOp==1){
-            out=(Number(num1)+Number(num2)).toFixed(8);
+            out=(Number(addend)+Number(num2)).toFixed(8);
         }
         if (currOp==2){
-            out=(Number(num1)-Number(num2)).toFixed(8);
+            out=(Number(addend)-Number(num2)).toFixed(8);
         }
         if (currOp==3){
-            out=(Number(num1)*Number(num2)).toFixed(8);
+            out=(Number(addend)*Number(num2)).toFixed(8);
         }
         if (currOp==4){
-            out=(Number(num1)/Number(num2)).toFixed(8);
+            out=(Number(addend)/Number(num2)).toFixed(8);
         }
-        out=parseFloat(out);
-        currState=2;
-        console.log("out = "+out);
     }
+    out=parseFloat(out);
+    currState=2;
+    console.log("out = "+out);
     update();
 }
