@@ -5,6 +5,8 @@ let num2="0";
 let float2=0;
 let len2=0;
 let out="0";
+let floatOut=0;
+let lenOut=0;
 //op1=+, op2=-, op3=*, op4=/
 let currOp=0;
 //state0= input number 1, state1=input number 2, state2=display result
@@ -53,6 +55,8 @@ function c(){
     float2=0;
     len2=0;
     out="0";
+    floatOut="0";
+    lenOut="0";
     console.log("cleared");
     update();
 }
@@ -90,7 +94,7 @@ function number(num){
         len2++;
         console.log("num2 = "+num2);
     }
-    if(currState==2){
+    if(currState==0 && num2!="0"){
         c();
         number(num);
     }
@@ -121,66 +125,76 @@ function decimal(){
 }
 
 function add(){
-    if(currState==0 || currState==1){
-        if(currOp==1){
-            equals();
-        }else{
-            currOp=1;
-            currState=1;
-            console.log("add");
+    if(currState==0 ){             
+        currOp=1;
+        currState=1;
+        num2="0";
+        float2=0;
+        len2=0;
+        console.log("add");
+        update();
+    }else{
+        if(currState==1){
+            equals(1);
         }
     }
-    update();
 }
 
 function subtract(){
-    if(currState==0 || currState==1){
-        if(currOp==2){
-            equals();
-        }else{
-            currOp=2;
-            currState=1;
-            console.log("subtract"); 
+    if(currState==0){
+        currOp=2;
+        currState=1;
+        num2="0";
+        float2=0;
+        len2=0;
+        console.log("subtract"); 
+        update();
+    }else{
+        if(currState==1){
+            equals(2);
         }
     }
-    update();
 }
 
 function multiply(){
-    if(currState==0 || currState==1){
-        if(currOp==3){
-            equals();
-        }else{
-            currOp=3;
-            currState=1;
-            console.log("multiply");
+    if(currState==0){        
+        currOp=3;
+        currState=1;
+        num2="0";
+        float2=0;
+        len2=0;
+        console.log("multiply");
+        update();
+    }else{
+        if(currState==1){
+            equals(3);
         }
     }
     
-    update();
 }
 
 function divide(){
-    if(currState==0 || currState==1){
-        if(currOp==4){
-            equals();
-        }else{
-            currOp=4;
-            currState=1;
-            console.log("divide");
+    if(currState==0){
+        currOp=4;
+        currState=1;
+        num2="0";
+        float2=0;
+        len2=0;
+        console.log("divide");
+        update();
+    }else{
+        if(currState==1){
+            equals(4);
         }
     }
-    update();
 }
 
-function equals(){
+function equals(newOp){
     let addend= num1;
     if(currState==1){
         addend=num1;
-    }else{
-        addend=out;
     }
-
+    console.log("addend= "+addend+" Num2= "+num2);
     if(currOp!=0){
         if (currOp==1){
             out=(Number(addend)+Number(num2)).toFixed(8);
@@ -196,7 +210,37 @@ function equals(){
         }
     }
     out=parseFloat(out);
+    if(Number(out) % 1 !== 0){
+        floatOut=1;
+    }else{
+        floatOut=0;
+    }
+    if(len1==0 && len2==0){
+        lenOut=0;
+    }else{
+        lenOut=String(out).length;
+        if(floatOut){
+            lenOut--;
+        }
+    }
     currState=2;
     console.log("out = "+out);
+    console.log("floatOut = "+floatOut);
+    console.log("lenOut = "+lenOut);
     update();
+    currState=1;
+    if(newOp==0){
+        currState=0;
+    }else{
+        currOp=newOp;
+        num2="0";
+        float2=0;
+        len2=0;
+    }
+    num1=out;
+    float1=floatOut;
+    len1=lenOut;
+    out="0";
+    floatOut="0";
+    lenOut="0";
 }
