@@ -1,6 +1,12 @@
 import { useState } from "react";
+import '@fontsource/roboto/300.css';
+import '@fontsource/roboto/400.css';
+import '@fontsource/roboto/500.css';
+import '@fontsource/roboto/700.css';
 import './App.css';
-import {getState,getScreen,getOp,c,add,subtract,multiply,divide, decimal, equals, number} from'./math.js';
+import Button from '@mui/material/Button';
+import Box from '@mui/material/Box';
+import {getScreen,getOp,c,add,subtract,multiply,divide, decimal, equals, number} from'./math.js';
 
 
 
@@ -10,6 +16,10 @@ function App() {
   const [multButtonColor,setMultButton]=useState("#cad2ffff");
   const [divButtonColor,setDivButton]=useState("#cad2ffff");
   const [screen,setScreen]=useState("0");
+
+  const OutputField = (props) => {
+    return (<Box sx={{ border: 1 , borderRadius: '5px' }} className="entry">{props.value}</Box>);
+  }
 
   function appEquals(){
     equals(0);
@@ -69,72 +79,71 @@ function App() {
   return (
     <table>
         <tr>
-            <td colspan="3">
-                <div class="entry" id="output">
-                    {screen}
-                </div>
+            <td colSpan="3">
+                <OutputField value={screen}/>
             </td>
             <td>
-                <button type="button" onClick={appC} style={{backgroundColor: "rgb(255, 223, 182)"}}>C</button>
+                <Button sx={{ border: 1 }} type="Button" onClick={appC} style={{backgroundColor: "rgb(255, 223, 182)"}}>C</Button>
             </td>
         </tr>
         <tr>
             <td>
-                <button type="button" onClick={() => appNumber(7)}>7</button>
+                <Button sx={{ border: 1 }}type="Button" onClick={() => appNumber(7)}style={{backgroundColor: "rgb(213, 255, 210)"}}>7</Button>
             </td>
             <td>
-                <button type="button" onClick={() => appNumber(8)}>8</button>
+                <Button sx={{ border: 1 }}type="Button" onClick={() => appNumber(8)}style={{backgroundColor: "rgb(213, 255, 210)"}}>8</Button>
             </td>
             <td>
-                <button type="button" onClick={() => appNumber(9)}>9</button>
+                <Button sx={{ border: 1 }}type="Button" onClick={() => appNumber(9)}style={{backgroundColor: "rgb(213, 255, 210)"}}>9</Button>
             </td>
             <td>
-                <button type="button" onClick={appDivide}style={{backgroundColor: divButtonColor}}>\</button>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <button type="button" onClick={() => appNumber(4)}>4</button>
-            </td>
-            <td>
-                <button type="button" onClick={() => appNumber(5)}>5</button>
-            </td>
-            <td>
-                <button type="button" onClick={() => appNumber(6)}>6</button>
-            </td>
-            <td>
-                <button type="button" onClick={appMultiply}style={{backgroundColor: multButtonColor}}>x</button>
+                <Button sx={{ border: 1 }}type="Button" onClick={appDivide}style={{backgroundColor: divButtonColor}}>\</Button>
             </td>
         </tr>
         <tr>
             <td>
-                <button type="button" onClick={() => appNumber(1)}>1</button>
+                <Button sx={{ border: 1 }}type="Button" onClick={() => appNumber(4)}style={{backgroundColor: "rgb(213, 255, 210)"}}>4</Button>
             </td>
             <td>
-                <button type="button" onClick={() => appNumber(2)}>2</button>
+                <Button sx={{ border: 1 }}type="Button" onClick={() => appNumber(5)}style={{backgroundColor: "rgb(213, 255, 210)"}}>5</Button>
             </td>
             <td>
-                <button type="button" onClick={() => appNumber(3)}>3</button>
+                <Button sx={{ border: 1 }}type="Button" onClick={() => appNumber(6)}style={{backgroundColor: "rgb(213, 255, 210)"}}>6</Button>
             </td>
             <td>
-                <button type="button" onClick={appSubtract}style={{backgroundColor: minButtonColor}}>-</button>
+                <Button sx={{ border: 1 }}type="Button" onClick={appMultiply}style={{backgroundColor: multButtonColor}}>x</Button>
             </td>
         </tr>
         <tr>
             <td>
-                <button type="button" onClick={() => appNumber(0)}>0</button>
+                <Button sx={{ border: 1 }}type="Button" onClick={() => appNumber(1)}style={{backgroundColor: "rgb(213, 255, 210)"}}>1</Button>
             </td>
             <td>
-                <button type="button" onClick={appDecimal}>.</button>
+                <Button sx={{ border: 1 }}type="Button" onClick={() => appNumber(2)}style={{backgroundColor: "rgb(213, 255, 210)"}}>2</Button>
             </td>
             <td>
-                <button type="button" onClick={appEquals}style={{backgroundColor: "#cad2ffff"}}>=</button>
+                <Button sx={{ border: 1 }}type="Button" onClick={() => appNumber(3)}style={{backgroundColor: "rgb(213, 255, 210)"}}>3</Button>
             </td>
             <td>
-                <button type="button" onClick={appPlus}style={{backgroundColor: plusButtonColor}}>+</button>
+                <Button sx={{ border: 1 }}type="Button" onClick={appSubtract}style={{backgroundColor: minButtonColor}}>-</Button>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <Button sx={{ border: 1 }}type="Button" onClick={() => appNumber(0)}style={{backgroundColor: "rgb(213, 255, 210)"}}>0</Button>
+            </td>
+            <td>
+                <Button sx={{ border: 1 }}type="Button" onClick={appDecimal}style={{backgroundColor: "rgb(213, 255, 210)"}}>.</Button>
+            </td>
+            <td>
+                <Button sx={{ border: 1 }}type="Button" onClick={appEquals}style={{backgroundColor: "#cad2ffff"}}>=</Button>
+            </td>
+            <td>
+                <Button sx={{ border: 1 }}type="Button" onClick={appPlus}style={{backgroundColor: plusButtonColor}}>+</Button>
             </td>
         </tr>
     </table>
+    
   );
 }
 
