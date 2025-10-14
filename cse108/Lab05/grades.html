@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Grades</title>
+        <link rel="stylesheet" href="grades.css">
+        <script src="grades.js"></script>
+
+    </head>
+
+    <body>
+        <div>
+            <h1>Search for grade:</h1>
+            <label for="searchFieldFirst">First Name:</label><br>
+            <input type="text" id= "searchFieldFirst"><br><br>
+            <label for="searchFieldLast">Last Name:</label><br>
+            <input type="text" id= "searchFieldLast"><br><br>
+            <input type="button" value="Search" onclick="search()"><br><br>
+            <table hidden id="searchResults">
+                <tr>
+                    <th>Name</th>
+                    <th>Grade</th>
+                </tr>
+                <tr>
+                    <td id="searchResultName">John Doe</td>
+                    <td id="searchResultGrade">92.3</td>
+                </tr>
+            </table>
+        </div><br><br>
+        <div>
+            <h1>New Student:</h1>
+            <label for="newFieldFirst">First Name:</label><br>
+            <input type="text" id= "newFieldFirst"><br><br>
+            <label for="newFieldLast">Last Name:</label><br>
+            <input type="text" id= "newFieldLast"><br><br>
+            <label for="newFieldGrade">Grade:</label><br>
+            <input type="text" id= "newFieldGrade"><br><br>
+            <input type="button" value="Submit" onclick="submitNew()"><br><br>
+            <p hidden id="newResults">Added Successfully</p>
+        </div><br><br>
+        <div>
+            <h1>Edit grade:</h1>
+            <label for="editFieldFirst">First Name:</label><br>
+            <input type="text" id= "editFieldFirst"><br><br>
+            <label for="editFieldLast">Last Name:</label><br>
+            <input type="text" id= "editFieldLast"><br><br>
+            <input type="button" value="Search" onclick="searchEdit()"><br><br>
+            <div id="editSection" style="border-width: 0px" hidden>
+                <label for="editFieldGrade">Grade:</label><br>
+                <input type="text" id= "editFieldGrade"><br><br>
+                <input type="button" value="Submit" onclick="submitEdit()"><br><br>
+            </div>
+            <p hidden id="editResults">Edited Successfully</p>
+            
+            
+        </div><br><br>
+        <div>
+            <h1>Delete Entry:</h1>
+            <label for="deleteFieldFirst">First Name:</label><br>
+            <input type="text" id= "deleteFieldFirst"><br><br>
+            <label for="deleteFieldLast">Last Name:</label><br>
+            <input type="text" id= "deleteFieldLast"><br><br>
+            <input type="button" value="Delete" onclick="submitDelete()"><br><br>
+            <p hidden id="deleteResults">Deleted Successfully</p>
+        </div><br><br>
+        <div>
+            <h1>Display All Grades:</h1>
+            <input type="button" value="Run" onclick="displayAll()"><br><br>
+            <table hidden id="displayResults"></table>
+        </div><br><br>
+    </body>
+</html>
