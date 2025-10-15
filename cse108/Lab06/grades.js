@@ -1,4 +1,4 @@
-const url = "https://amhep.pythonanywhere.com/grades";
+const url = "http://127.0.0.1:5000/grades";
 
 let searchName="";
 let newName="";
@@ -10,6 +10,8 @@ let deleteName="";
 function search(){
     searchName = document.getElementById("searchFieldFirst").value+"%20"+document.getElementById("searchFieldLast").value;
     console.log("Searching for "+searchName);
+    document.getElementById("searchResultName").innerHTML= "0";
+    document.getElementById("searchResultGrade").innerHTML= "0";
     fetch(url+"/"+searchName, {
         method: "GET",
     })
@@ -22,8 +24,8 @@ function search(){
       .then(data => {
         console.log(data);
         searchName=Object.keys(data)[0];
-        document.getElementById("searchResultName").innerHTML= searchName;
-        document.getElementById("searchResultGrade").innerHTML= data[searchName];
+        document.getElementById("searchResultName").innerHTML= data["name"];
+        document.getElementById("searchResultGrade").innerHTML= data["grade"];
         if (document.getElementById("searchResults").hasAttribute("hidden")) {
             document.getElementById("searchResults").removeAttribute("hidden");
         }
@@ -84,7 +86,7 @@ function searchEdit(){
 
 function submitEdit(){
     editName = document.getElementById("editFieldFirst").value+"%20"+document.getElementById("editFieldLast").value;
-    editGrade = document.getElementById("editFieldGrade");
+    editGrade = document.getElementById("editFieldGrade").value;
     const newEdit={
         "grade": editGrade
     };
@@ -100,7 +102,7 @@ function submitEdit(){
             throw new Error("HTTP Error: "+response.status);
         }
         editName = document.getElementById("editFieldFirst").value+" "+document.getElementById("editFieldLast").value;
-        document.getElementById("editResults").innerHTML= editName+" Changed to grade "+newGrade;
+        document.getElementById("editResults").innerHTML= editName+" Changed to grade "+editGrade;
         if (document.getElementById("editResults").hasAttribute("hidden")) {
             document.getElementById("editResults").removeAttribute("hidden");
         }
@@ -148,7 +150,7 @@ function displayAll(){
         }
         table.innerHTML= "<tr><th>Student Name</th><th>Grade</th></tr>";
         for (const key in data) {
-            fetch(url+"/"+key,{method:"DELETE"}); //deletes all the spam
+            // fetch(url+"/"+key,{method:"DELETE"}); //deletes all the spam
             let newRow = table.insertRow();
             let cell1 = newRow.insertCell(0);
             let cell2 = newRow.insertCell(1);
