@@ -1,0 +1,38 @@
+ <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <script src="/static/enrollment.js" charset="utf-8"></script>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>My Flask App</title>
+    </head>
+    <body>
+        <h1>Welcome to my Flask application!</h1>
+        <p>This is the index page.</p>
+        <table>
+            <thead>
+                <tr>
+                    <!-- Dynamically generate table headers based on the keys of the first data item -->
+                    {% if data %}
+                        {% for key in data[0].keys() %}
+                            <th>{{ key.capitalize() }}</th>
+                        {% endfor %}
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Loop through the data to create table rows -->
+                {% for row in data %}
+                    <tr>
+                        <!-- Loop through the values in each row to create table cells -->
+                        {% for value in row.values() %}
+                            <td>{{ value }}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <a href="/login">login</a>
+        <button onclick="test()">test</button>
+    </body>
+    </html>
