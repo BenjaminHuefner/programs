@@ -93,7 +93,7 @@ def check():
     # for student in studentIdsInFirstCourse:
     #     studentNames.append(User.query.filter_by(id=student.student_id).first().name)
     # return studentNames
-    return redirect(url_for('login_test'))
+    return redirect(url_for('login'))
     # data = [
     #     {'name': 'Alice', 'age': 30, 'city': 'New York'},
     #     {'name': 'Bob', 'age': 24, 'city': 'London'},
@@ -101,10 +101,9 @@ def check():
     #     {'name': 'Diana', 'age': 28, 'city': 'Tokyo'},
     # ]
     # return render_template('index.html', data=data)
-    
 
-@app.route("/login_test", methods=['GET', 'POST'])
-def login_test():
+@app.route("/login", methods=['GET', 'POST'])
+def login():
     if( request.method == 'POST' ):
         username = request.form['username']
         password = request.form['password']
@@ -115,15 +114,51 @@ def login_test():
             # resp.set_cookie('sessionID', '123456789abcdef')
             # return resp
             login_user(user)
-            return redirect(url_for('courses'))
-    return render_template('login_test.html')
-        
+            if User.query.filter_by(name=username).first().type == 'admin':
+                return redirect('/admin', code='303')
+            elif(User.query.filter_by(name=username).first().type == 'teacher'):
+                return redirect(url_for('teacher'), code='303')
+            else:
+                return redirect(url_for('student'), code='303')
+        else:
+            
+            return redirect(url_for('loginredirect'))
+    if request.cookies.get('invalid') == '1':
+        resp=make_response(render_template('login.html', invalid=1))
+        resp.set_cookie('invalid', '0')
+        return resp
+    else:
+        return render_template('login.html', invalid=0)
+
+@app.route("/login_redirect")
+def loginredirect():
+    resp=make_response(redirect(url_for('login')))
+    resp.set_cookie('invalid', '1')
+    return resp
+    # return redirect(url_for('login'))
+  
 @app.route("/courses")
 @login_required
 def courses():
     # if request.cookies.get('sessionID') != '123456789abcdef':
     #     return 'error: not logged in'
     return render_template('courses.html')
+
+@app.route("/teacher")
+@login_required
+def teacher():
+    if (current_user.type == 'admin' or current_user.type == 'teacher'):    
+        return render_template('courses.html')
+    else:    
+        return redirect('/', code='303')
+
+@app.route("/student")
+@login_required
+def student():
+    if (current_user.type == 'admin' or current_user.type == 'student'):    
+        return render_template('courses.html')
+    else:    
+        return redirect('/', code='303')
 
 @app.route("/logout")
 @login_required

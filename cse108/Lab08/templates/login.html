@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log In</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <script src="/static/login.js" charset="utf-8"></script>
+</head>
+<body>
+    <div class="container">
+        <section class="card">
+            <div class="header-row">
+                <h2>Log in page</h2>
+            </div>
+            <form id="loginForm" action="/login" method="post">
+                <div class="form-login-group">
+                    <div class="input-row">
+                        <h3>Username</h3>
+                        <input type="text"  name ="username"id="username" placeholder="Enter your username..." onkeypress="handleKeyPress(event)">
+                    </div>
+                    <div class="input-row">
+                        <h3>Password</h3>
+                        <input type="password" name="password" id="password" placeholder="Enter your password..." onkeypress="handleKeyPress(event)">
+                    </div>
+                    <div id="message-display"></div>
+                </div>
+            </form>
+            <button class="signIn" onclick="signin()">Sign in</button>
+
+            <script> function handleKeyPress(event) {
+                if (event.key === 'Enter') {
+                    signin()
+                }
+            }</script>
+        </section>
+    </div>
+</body>
+{% if invalid %}
+<script> invalidLogin() </script>
+{% endif %} 
+</html>

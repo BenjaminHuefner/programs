@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professor page</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <section class="card">
+            <div class="header-row">
+                <h3 id="greeting"></h3>
+                <a href="login.html">Sign out</a>
+                <h2>Professor page</h2>
+            </div>
+            <div class="tab-container">
+                <button id="back-button" onclick="showCoursesList()" style="display: none;">← Back</button>
+                <h2 class="tab-title">Your Courses</h2>
+            </div>
+            <div class="courses-container">
+                <div class="myCourses">
+                    <table id="courses-table">
+                        <thead>
+                            <tr>
+                                <th>Course Name</th>
+                                <th>Teacher</th>
+                                <th>Time</th>
+                                <th>Students Enrolled</th>
+                            </tr>
+                        </thead>
+                        <tbody id="mycourses-table-body">
+                            <!-- My courses rows will be populated here -->
+
+                            <!-- 
+                            GET Request to retrieve all courses:
+                            <form action="path" method="GET">
+                                [{course, teacher, time, enrolled}]
+                            </form>
+                            -->
+                        </tbody>
+                    </table>
+                    <table id="course-detail-table" style="display: none;">
+                        <thead>
+                            <tr>
+                                <th>Student Name</th>
+                                <th>Grade</th>
+                            </tr>
+                        </thead>
+                        <tbody id="course-detail-table-body">
+                            <!-- Course detail rows will be populated here -->
+                             
+                            <!-- 
+                            GET Request to retrieve students for a specific course:
+                            <form action="path" method="GET">
+                                Returns students and their grades:
+                                [{name, grade}]
+                            </form>
+                            
+                            POST Request to update a student's grade:
+                            <form action="path" method="POST">
+
+                            </form>
+                            -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </div>
+    <script src="script.js"></script>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const username = urlParams.get('username');
+        if (username) {
+            document.getElementById('greeting').textContent = `Hello, ${username}`;
+        }
+    </script>
+    <script>
+        // loads initialized tables
+        loadCourses();
+    </script>
+</body>
+</html>
