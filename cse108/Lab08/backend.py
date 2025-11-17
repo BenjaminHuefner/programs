@@ -1,3 +1,5 @@
+import json
+
 from flask import Flask, request, render_template, redirect, url_for, make_response
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
@@ -124,11 +126,12 @@ def login():
             # resp=make_response(redirect(url_for('courses')))
             # resp.set_cookie('sessionID', '123456789abcdef')
             # return resp
+            tempname=username.replace(" ","_")
             login_user(user)
             if User.query.filter_by(name=username).first().type == 'admin':
                 return redirect('/admin', code='303')
             elif(User.query.filter_by(name=username).first().type == 'teacher'):
-                return redirect(url_for('teacher'), code='303')
+                return redirect(url_for('teacher', teacherName=tempname), code='303')
             else:
                 return redirect(url_for('student'), code='303')
         else:
@@ -155,13 +158,70 @@ def courses():
     #     return 'error: not logged in'
     return render_template('courses.html')
 
-@app.route("/teacher")
+@app.route("/teacher/<teacherName>")
 @login_required
-def teacher():
-    if (current_user.type == 'admin' or current_user.type == 'teacher'):    
-        return render_template('professorTest.html')
+def teacher(teacherName):
+    realName=teacherName.replace("_"," ")
+    if(current_user.type == "admin" or current_user.name==realName):  
+        return render_template('professorTest.html', name= teacherName)
     else:    
         return redirect('/', code='303')
+
+@app.route("/teacher/<teacherName>/courses")
+@login_required
+def getCourses(teacherName):
+    realName=teacherName.replace("_"," ")
+    if(current_user.type == "admin" or current_user.name==realName):
+        if(current_user.type == "admin" and current_user.name==realName):
+            allCourses=Course.query.all()
+        else:
+            teacherID=User.query.filter_by(name=realName).first().id
+            allCourses=Course.query.filter_by(teacher_id=teacherID).all()
+        arrayOfCourses=[]
+        for c in allCourses:
+            arrayOfCourses.append({"course":c.name, "teacher":c.teacher.name, "time":c.time,"enrolled":c.number_enrolled,"capacity":c.capacity})
+        return json.dumps(arrayOfCourses)
+    else:    
+        return 0
+    
+@app.route("/grades/<teacherName>/<course>")
+@login_required
+def getGrades(teacherName,course):
+    realName=teacherName.replace("_"," ")
+    realCourseName=course.replace("_"," ")
+    if(current_user.type == "admin" or current_user.name==realName):
+        tempCourse=Course.query.filter_by(name=realCourseName).first()
+        if(current_user.type!="admin"):
+            if tempCourse.teacher.name != realName:
+                return 0
+        allEnrollments=Enrollment.query.filter_by(course_id=tempCourse.id).all()
+        arrayOfEnrollments=[]
+        for e in allEnrollments:
+            arrayOfEnrollments.append({"name":e.student.name, "grade":e.grade})
+        return json.dumps(arrayOfEnrollments)
+    else:    
+        return 0
+
+@app.route("/gradeUpdate/<teacherName>/<course>/<student>", methods=['POST'])
+@login_required
+def updateGrade(teacherName,course,student):
+    if( request.method == 'POST' ):
+        realName=teacherName.replace("_"," ")
+        realCourseName=course.replace("_"," ")
+        realStudentName=student.replace("_"," ")
+        tempCourse=Course.query.filter_by(name=realCourseName).first()
+        if(current_user.type == "admin" or (current_user.name==realName and tempCourse.teacher.name == realName)):
+            studentID=User.query.filter_by(name=realStudentName).first().id
+            enrollment=Enrollment.query.filter_by(student_id=studentID, course_id=tempCourse.id).first()
+            enrollment.grade=request.data.decode('utf-8')
+            print(enrollment.grade)
+            db.session.commit()
+            return "0"
+        else:    
+            return "0"
+    else:
+        return "0"
+
 
 @app.route("/student")
 @login_required

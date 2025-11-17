@@ -1,5 +1,74 @@
+const url = "http://127.0.0.1:5000/"
+let professorName="test"
+let currStudents=[
+            // { name: 'Michael', grade: 92 },
+            // { name: 'Ben', grade: 95 },
+            // { name: 'Salvador', grade: 99}
+        ]
+let coursesData = []
 
+function getCourses(name){
+    professorName=name
+    console.log(name)
+    fetch(url+"teacher/"+name+"/courses", {
+        method: "GET",
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error("HTTP Error: "+response.status);
+        }
+        return response.json();
+      })
+      .then(data => {
+        coursesData=data;
+        loadCourses();
 
+      })
+    .catch((error) => {
+        console.error("Error:", error);
+    });
+}
+
+function getEnrollments(course){
+    let courseNameFormatted= course.replace(" ","_")
+    fetch(url+"grades/"+professorName+"/"+courseNameFormatted, {
+        method: "GET",
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error("HTTP Error: "+response.status);
+        }
+        return response.json();
+      })
+      .then(data => {
+        currStudents=data;
+        showCourseDetails(course);
+
+      })
+    .catch((error) => {
+        console.error("Error:", error);
+    });
+}
+
+function updateGrade(course,student,grade){
+    let courseNameFormatted= course.replace(" ","_")
+    let studentNameFormatted= student.replace(" ","_")
+    fetch(url+"gradeUpdate/"+professorName+"/"+courseNameFormatted+"/"+studentNameFormatted, {
+        method: "POST",
+        headers: {
+            'Content-Type': 'text/plain'
+        },
+        body: String(grade)
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error("HTTP Error: "+response.status);
+        }
+      })
+    .catch((error) => {
+        console.error("Error:", error);
+    });
+}
 // Show courses list (FOR CSS)
 function showCoursesList() {
     document.getElementById('courses-table').style.display = 'table';
@@ -12,29 +81,7 @@ function showCoursesList() {
 
 // INITIAL TABLE DATA FOR TESTING
 // Professor page course data
-const coursesData = [
-    {
-        course: 'CSE 108',
-        teacher: 'Professor Smith',
-        time: 'Monday',
-        enrolled: '3',
-        students: [
-            { name: 'Michael', grade: 92 },
-            { name: 'Ben', grade: 95 },
-            { name: 'Salvador', grade: 99}
-        ]
-    },
-    {
-        course: 'CSE 30',
-        teacher: 'Professor Johnson',
-        time: 'Monday',
-        enrolled: '2',
-        students: [
-            { name: 'Sarah', grade: 92 },
-            { name: 'John', grade: 85 }
-        ]
-    }
-];
+
 
 // Populates courses table for professor page
 function loadCourses() {
@@ -46,10 +93,10 @@ function loadCourses() {
     coursesData.forEach(course => {
         const row = document.createElement('tr');
         row.innerHTML = `
-            <td><a href="#" onclick="showCourseDetails('${course.course}'); return false;" style="text-decoration: underline; color: inherit; font-size: 1em;">${course.course}</a></td>
+            <td><a href="#" onclick="getEnrollments('${course.course}'); return false;" style="text-decoration: underline; color: inherit; font-size: 1em;">${course.course}</a></td>
             <td>${course.teacher}</td>
             <td>${course.time}</td>
-            <td>${course.enrolled}</td>
+            <td>${course.enrolled}/${course.capacity}</td>
         `;
         tableBody.appendChild(row);
     });
@@ -71,7 +118,7 @@ function showCourseDetails(courseName) {
     const studentsBody = document.getElementById('course-detail-table-body');
     studentsBody.innerHTML = '';
     
-    course.students.forEach((student, index) => {
+    currStudents.forEach((student, index) => {
         const row = document.createElement('tr');
         row.innerHTML = `
             <td>${student.name}</td>
@@ -83,10 +130,12 @@ function showCourseDetails(courseName) {
         gradeCell.addEventListener('blur', function() {
             const newGrade = parseInt(this.textContent.trim());
             if (!isNaN(newGrade)) {
-                course.students[index].grade = newGrade;
+                currStudents[index].grade = newGrade;
                 console.log(`Updated ${student.name}'s grade to ${newGrade}`);
+                updateGrade(courseName,student.name,String(newGrade))
+
             } else {
-                this.textContent = course.students[index].grade;
+                this.textContent = currStudents[index].grade;
             }
         });
         
