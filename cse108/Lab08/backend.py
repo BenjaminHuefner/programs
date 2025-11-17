@@ -83,10 +83,7 @@ admin.add_view(protectedModelView(User, db.session))
 admin.add_view(protectedModelView(Course, db.session))
 admin.add_view(protectedModelView(Enrollment, db.session))
 admin.add_link(MenuLink(name='Logout', category='', url='/logout'))
-# admin.ModelView().is_accessible = False
-# admin pass = admin123test
-# teacher pass = teacher123test
-# student pass = student123test
+
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -94,38 +91,20 @@ def load_user(user_id):
     
 with app.app_context():
     db.create_all()
-    # Course.__table__.drop(db.engine, checkfirst=True)
 
 
 
 @app.route("/")
 def check():
-    # firstCourseTaught= Course.query.filter_by(teacher_id=User.query.filter_by(name='Ralph Jenkins').first().id).first()
-    # studentIdsInFirstCourse= Enrollment.query.filter_by(course_id=firstCourseTaught.id).all()
-    # studentNames = []
-    # for student in studentIdsInFirstCourse:
-    #     studentNames.append(User.query.filter_by(id=student.student_id).first().name)
-    # return studentNames
     return redirect(url_for('login'))
-    # data = [
-    #     {'name': 'Alice', 'age': 30, 'city': 'New York'},
-    #     {'name': 'Bob', 'age': 24, 'city': 'London'},
-    #     {'name': 'Charlie', 'age': 35, 'city': 'Paris'},
-    #     {'name': 'Diana', 'age': 28, 'city': 'Tokyo'},
-    # ]
-    # return render_template('index.html', data=data)
 
 @app.route("/login", methods=['GET', 'POST'])
 def login():
     if( request.method == 'POST' ):
         username = request.form['username']
         password = request.form['password']
-        # return f"Username: {username}, Password: {password}"
         user = User.query.filter_by(name=username).first()
         if (user and user.password == password):
-            # resp=make_response(redirect(url_for('courses')))
-            # resp.set_cookie('sessionID', '123456789abcdef')
-            # return resp
             tempname=username.replace(" ","_")
             login_user(user)
             if User.query.filter_by(name=username).first().type == 'admin':
@@ -133,7 +112,7 @@ def login():
             elif(User.query.filter_by(name=username).first().type == 'teacher'):
                 return redirect(url_for('teacher', teacherName=tempname), code='303')
             else:
-                return redirect(url_for('student'), code='303')
+                return redirect(url_for('student', studentName=tempname), code='303')
         else:
             
             return redirect(url_for('loginredirect'))
@@ -149,14 +128,6 @@ def loginredirect():
     resp=make_response(redirect(url_for('login')))
     resp.set_cookie('invalid', '1')
     return resp
-    # return redirect(url_for('login'))
-  
-@app.route("/courses")
-@login_required
-def courses():
-    # if request.cookies.get('sessionID') != '123456789abcdef':
-    #     return 'error: not logged in'
-    return render_template('courses.html')
 
 @app.route("/teacher/<teacherName>")
 @login_required
@@ -223,11 +194,12 @@ def updateGrade(teacherName,course,student):
         return "0"
 
 
-@app.route("/student")
+@app.route("/student/<studentName>")
 @login_required
-def student():
-    if (current_user.type == 'admin' or current_user.type == 'student'):    
-        return render_template('courses.html')
+def student(studentName):
+    realName=studentName.replace("_"," ")
+    if(current_user.type == "admin" or current_user.name==realName):  
+        return render_template('student.html', name= studentName)
     else:    
         return redirect('/', code='303')
 
