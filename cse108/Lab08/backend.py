@@ -4,6 +4,9 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
+from flask_admin.menu import MenuLink
+from flask_admin.base import AdminIndexView
+    
 
 
 app = Flask(__name__)
@@ -14,7 +17,7 @@ app.config["SECRET_KEY"] = "supersecretkey"
 app.config['FLASK_ADMIN_SWATCH'] = 'cerulean'
 app.config['SESSION_PERMANENT'] = False
 # print(flask_admin.__version__)
-admin = Admin(app, name='microblog')
+
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -60,16 +63,24 @@ class Enrollment(db.Model):
 class protectedModelView(ModelView):
     def is_accessible(self):
         # return True
-        if current_user.type == 'admin': 
-            return current_user.is_authenticated
-        else:
-            return False
+        return (current_user.is_authenticated and current_user.type == 'admin')
+            
     def inaccessible_callback(self, name, **kwargs):
-        return redirect(url_for('login_test'))
+        return redirect(url_for('login'))
     
+class protectedIndexView(AdminIndexView):
+    def is_accessible(self):
+        # return True
+        return (current_user.is_authenticated and current_user.type == 'admin')
+            
+    def inaccessible_callback(self, name, **kwargs):
+        return redirect(url_for('login'))
+
+admin = Admin(app, name='microblog', index_view=protectedIndexView())
 admin.add_view(protectedModelView(User, db.session))
 admin.add_view(protectedModelView(Course, db.session))
 admin.add_view(protectedModelView(Enrollment, db.session))
+admin.add_link(MenuLink(name='Logout', category='', url='/logout'))
 # admin.ModelView().is_accessible = False
 # admin pass = admin123test
 # teacher pass = teacher123test
@@ -148,7 +159,7 @@ def courses():
 @login_required
 def teacher():
     if (current_user.type == 'admin' or current_user.type == 'teacher'):    
-        return render_template('courses.html')
+        return render_template('professorTest.html')
     else:    
         return redirect('/', code='303')
 
@@ -161,10 +172,10 @@ def student():
         return redirect('/', code='303')
 
 @app.route("/logout")
-@login_required
 def logout():
-    logout_user()
-    return redirect(url_for('login_test'))
+    if(current_user.is_authenticated):
+        logout_user()
+    return redirect(url_for('login'))
 
 
 if __name__ == "__main__":
