@@ -65,7 +65,7 @@ class protectedModelView(ModelView):
         else:
             return False
     def inaccessible_callback(self, name, **kwargs):
-        return redirect(url_for('login'))
+        return redirect(url_for('login_test'))
     
 admin.add_view(protectedModelView(User, db.session))
 admin.add_view(protectedModelView(Course, db.session))

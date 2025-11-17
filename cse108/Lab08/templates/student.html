@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student page</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <section class="card">
+            <div class="header-row">
+                <h3 id="greeting"></h3>
+                <a href="login.html">Sign out</a>
+                <h2>Student page</h2>
+            </div>
+            <div class="button-container">
+                <button class="courses active" onclick="setActiveButton(this), viewYourCourses()">Your Courses</button>
+                <button class="courses" onclick="setActiveButton(this), viewAddCourses(), loadAddCourses()">Add Courses</button>
+            </div>
+            <div class="courses-container">
+                <div class="myCourses" style="display: block;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Course</th>
+                                <th>Teacher</th>
+                                <th>Time</th>
+                                <th>Students Enrolled</th>
+                            </tr>
+                        </thead>
+                        <tbody id="mycourses-table-body">
+                            <!-- 
+                                GET endpoint to return all courses the logged-in
+                                student is enrolled in.
+
+                                Example DROP form per row (placeholder):
+                                <tr>
+                                  <td>CSE 107</td>
+                                  <td>Prof. Hepworth</td>
+                                  <td>MWF 10:00–10:50</td>
+                                  <td>A-</td>
+                                  <td>
+                                    <POST to drop this course -->
+                                    <!--
+                                    <form action="/api/student/drop" method="POST">
+                                      <input type="hidden" name="course_id" value="1">
+                                      <button type="submit">Drop</button>
+                                    </form>
+                                    -->
+                                  </td>
+                                </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="addCourses" style="display: none;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Course</th>
+                                <th>Teacher</th>
+                                <th>Time</th>
+                                <th>Students Enrolled</th>
+                                <th>Add Class</th>
+                            </tr>
+                        </thead>
+                        <tbody id="student-add-body">
+                            <!-- 
+                                GET endpoint to return all available courses
+                                (with enroll counts and capacity).
+
+                                ENROLL form per row (placeholder):
+                                <tr>
+                                  <td>CSE 120</td>
+                                  <td>Prof. X</td>
+                                  <td>TuTh 2:00–3:15</td>
+                                  <td>22</td>
+                                  <td>30</td>
+                                  <td>
+                                    POST to enroll in this course -->
+                                    <!--
+                                    <form action="/api/student/enroll" method="POST">
+                                      <input type="hidden" name="course_id" value="3">
+                                      <button type="submit">Enroll</button>
+                                    </form>
+                                    -->
+                                  </td>
+                                </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </div>
+    <script src="script (1).js"></script>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const username = urlParams.get('username');
+        if (username) {
+            document.getElementById('greeting').textContent = `Hello, ${username}`;
+        }
+    </script>
+    <script>
+        (function initStudent() {
+            const buttons = document.querySelectorAll('.courses');
+            if (buttons.length > 0) {
+                setActiveButton(buttons[0]);
+            }
+            if (typeof viewYourCourses === 'function') {
+                viewYourCourses();
+            }
+        })();
+    </script>
+    <script>
+        // loads my courses on boot
+        loadStudentCourses();
+    </script>
+</body>
+</html>
