@@ -203,6 +203,115 @@ def student(studentName):
     else:    
         return redirect('/', code='303')
 
+@app.route("/student/<studentName>/my_courses")
+@login_required
+def getStudentCourses(studentName):
+    realName=studentName.replace("_"," ")
+    if(current_user.type == "admin" or current_user.name==realName):
+        if(current_user.type == "admin" and current_user.name==realName):
+            return 0
+        else:
+            studentID=User.query.filter_by(name=realName).first().id
+            allEnrollments=Enrollment.query.filter_by(student_id=studentID).all()
+        arrayOfCourses=[]
+        for e in allEnrollments:
+            c=Course.query.filter_by(id=e.course_id).first()
+            arrayOfCourses.append({"course":c.name, "teacher":c.teacher.name, "time":c.time,"enrolled":c.number_enrolled,"capacity":c.capacity})
+        return json.dumps(arrayOfCourses)
+    else:    
+        return 0
+    
+@app.route("/student/<studentName>/all_courses")
+@login_required
+def getAllStudentCourses(studentName):
+    realName=studentName.replace("_"," ")
+    if(current_user.type == "admin" or current_user.name==realName):
+        if(current_user.type == "admin" and current_user.name==realName):
+            return 0
+        else:
+            studentID=User.query.filter_by(name=realName).first().id
+            allEnrollments=Enrollment.query.filter_by(student_id=studentID).all()
+            allCourses=Course.query.all()
+        arrayOfMyCourses=[]
+        arrayOfCourses=[]
+        for e in allEnrollments:
+            arrayOfMyCourses.append(e.course_id)
+        for c in allCourses:
+            if c.id in arrayOfMyCourses:
+                arrayOfCourses.append({"course":c.name, "teacher":c.teacher.name, "time":c.time,"enrolled":c.number_enrolled,"capacity":c.capacity,"isEnrolled":True})
+            else:
+                arrayOfCourses.append({"course":c.name, "teacher":c.teacher.name, "time":c.time,"enrolled":c.number_enrolled,"capacity":c.capacity,"isEnrolled":False})
+        return json.dumps(arrayOfCourses)
+    else:    
+        return 0
+
+@app.route("/courseUpdate/<studentName>/<course>", methods=['POST','DELETE'])
+@login_required
+def updateCourse(studentName,course):
+    if( request.method == 'POST' ):
+        realName=studentName.replace("_"," ")
+        realCourseName=course.replace("_"," ")
+        tempCourse=Course.query.filter_by(name=realCourseName).first()
+        if(current_user.type == "admin" or (current_user.name==realName)):
+            if(current_user.type == "admin" and current_user.name==realName):
+                return "0"    
+            studentID=User.query.filter_by(name=realName).first().id
+            enrollment=Enrollment.query.filter_by(student_id=studentID, course_id=tempCourse.id).first()
+            if (enrollment is None) and (tempCourse.number_enrolled<tempCourse.capacity):
+                db.session.add(Enrollment(student_id=studentID,course_id=tempCourse.id,grade="100"))
+                tempCourse.number_enrolled=tempCourse.number_enrolled+1
+                db.session.commit()
+                studentID=User.query.filter_by(name=realName).first().id
+                allEnrollments=Enrollment.query.filter_by(student_id=studentID).all()
+                allCourses=Course.query.all()
+                arrayOfMyCourses=[]
+                arrayOfCourses=[]
+                for e in allEnrollments:
+                    arrayOfMyCourses.append(e.course_id)
+                for c in allCourses:
+                    if c.id in arrayOfMyCourses:
+                        arrayOfCourses.append({"course":c.name, "teacher":c.teacher.name, "time":c.time,"enrolled":c.number_enrolled,"capacity":c.capacity,"isEnrolled":True})
+                    else:
+                        arrayOfCourses.append({"course":c.name, "teacher":c.teacher.name, "time":c.time,"enrolled":c.number_enrolled,"capacity":c.capacity,"isEnrolled":False})
+                return json.dumps(arrayOfCourses)
+            else:
+                return "0"
+        else:    
+            return "0"
+    elif(request.method =='DELETE'):
+        realName=studentName.replace("_"," ")
+        realCourseName=course.replace("_"," ")
+        tempCourse=Course.query.filter_by(name=realCourseName).first()
+        if(current_user.type == "admin" or (current_user.name==realName)):
+            if(current_user.type == "admin" and current_user.name==realName):
+                return "0"    
+            studentID=User.query.filter_by(name=realName).first().id
+            enrollment=Enrollment.query.filter_by(student_id=studentID, course_id=tempCourse.id).first()
+            if (enrollment is None) and (tempCourse.number_enrolled<tempCourse.capacity):
+                return "0"
+            else:
+                db.session.delete(enrollment)
+                tempCourse.number_enrolled=tempCourse.number_enrolled-1
+                db.session.commit()
+                studentID=User.query.filter_by(name=realName).first().id
+                allEnrollments=Enrollment.query.filter_by(student_id=studentID).all()
+                allCourses=Course.query.all()
+                arrayOfMyCourses=[]
+                arrayOfCourses=[]
+                for e in allEnrollments:
+                    arrayOfMyCourses.append(e.course_id)
+                for c in allCourses:
+                    if c.id in arrayOfMyCourses:
+                        arrayOfCourses.append({"course":c.name, "teacher":c.teacher.name, "time":c.time,"enrolled":c.number_enrolled,"capacity":c.capacity,"isEnrolled":True})
+                    else:
+                        arrayOfCourses.append({"course":c.name, "teacher":c.teacher.name, "time":c.time,"enrolled":c.number_enrolled,"capacity":c.capacity,"isEnrolled":False})
+                return json.dumps(arrayOfCourses)
+        else:    
+            return "0"
+    else:
+        return "0"
+
+
 @app.route("/logout")
 def logout():
     if(current_user.is_authenticated):

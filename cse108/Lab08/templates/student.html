@@ -16,8 +16,8 @@
                 <h2>Student page</h2>
             </div>
             <div class="button-container">
-                <button class="courses active" onclick="setActiveButton(this), viewYourCourses()">Your Courses</button>
-                <button class="courses" onclick="setActiveButton(this), viewAddCourses(), loadAddCourses()">Add Courses</button>
+                <button class="courses active" onclick="setActiveButton(this), getYourCourses()">Your Courses</button>
+                <button class="courses" onclick="setActiveButton(this), getAddCourses()">Add Courses</button>
             </div>
             <div class="courses-container">
                 <div class="myCourses" style="display: block;">
@@ -93,28 +93,9 @@
             </div>
         </section>
     </div>
-    <script src="script (1).js"></script>
-    <script>
-        const urlParams = new URLSearchParams(window.location.search);
-        const username = urlParams.get('username');
-        if (username) {
-            document.getElementById('greeting').textContent = `Hello, ${username}`;
-        }
-    </script>
-    <script>
-        (function initStudent() {
-            const buttons = document.querySelectorAll('.courses');
-            if (buttons.length > 0) {
-                setActiveButton(buttons[0]);
-            }
-            if (typeof viewYourCourses === 'function') {
-                viewYourCourses();
-            }
-        })();
-    </script>
-    <script>
-        // loads my courses on boot
-        loadStudentCourses();
-    </script>
-</body>
+</body> 
+<script>
+    studentName= "{{name}}" ;
+    getYourCourses();
+</script>
 </html>
