@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkers - Log In</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <script src="/static/login.js" charset="utf-8"></script>
+</head>
+<body>
+   <nav>
+        <img src="/static/checkerslogo.png" alt="Checkers Logo" class="logo">
+        <span>Checkers 2025</span>
+        <h3>Welcome to Checkers</h3>
+   </nav>
+        <section class="card">
+            <div class="header-row">
+                <h2>Log In</h2>
+            </div>
+            <form id="loginForm" action="/login" method="post">
+                <div class="form-group">
+                    <div class="input-row">
+                        <h3>Username</h3>
+                        <input type="text"  name ="username"id="username" placeholder="Enter your username..." >
+                    </div>
+                    <div class="input-row">
+                        <h3>Password</h3>
+                        <input type="password" name="password" id="password" placeholder="Enter your password...">
+                    </div>
+                    <div id="message-display-login"></div>
+                </div>
+            </form>
+            <button class="button" onclick="signin()">Sign in</button>
+
+            <!-- <script> function handleKeyPress(event) {
+                if (event.key === 'Enter') {
+                    signin()
+                }
+            }</script> -->
+        </section>
+        <section class="card">
+            <div class="header-row">
+                <h2>Sign up</h2>
+            </div>
+            <form id="signupForm" action="/signup" method="post">
+                <div class="form-group">
+                    <div class="input-row">
+                        <h3>Username</h3>
+                        <input type="text"  name ="newusername"id="newusername" placeholder="Enter your username..." >
+                    </div>
+                    <div class="input-row">
+                        <h3>Password</h3>
+                        <input type="password" name="newpassword" id="newpassword" placeholder="Enter your password..." >
+                    </div>
+                    <div class="input-row">
+                        <h3>Confirm Password</h3>
+                        <input type="password" name="confirmpassword" id="confirmpassword" placeholder="Confirm your password...">
+                    </div>
+                    <div id="message-display-signup"></div>
+                </div>
+            </form>
+            <button class="button" onclick="signup()">Sign Up</button>
+
+            <!-- <script> function handleKeyPress(event) {
+                if (event.key === 'Enter') {
+                    signin()
+                }
+            }</script> -->
+        </section>
+    <section class="footer">
+        <h3>2025 Checkers by: Michael Becerril, Ben Huefner, and Salvador Plancarte</h3>
+    </section>
+</body>
+<!-- Needs Flask first to function -->
+{% if invalid %}
+<script> invalidLogin() </script>
+{% endif %} 
+</html>

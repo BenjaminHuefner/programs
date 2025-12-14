@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkers - Find Games</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="find_games.js" charset="utf-8"></script>
+</head>
+<body>
+   <nav>
+        <img src="checkerslogo.png" alt="Checkers Logo" class="logo">
+        <span>Checkers 2025</span>
+        <h3>Find Games</h3>
+        <a href="/logout">Sign Out</a>
+   </nav>
+
+   <section class="card find-games-card">
+        <div class="header-row">
+            <h2>Available Games</h2>
+        </div>
+
+        <div id="message-display-findgames"></div>
+
+        <div class="find-games-table-wrap">
+            <table class="find-games-table">
+                <thead>
+                    <tr>
+                        <th>Host Player</th>
+                        <th>Code (if required)</th>
+                        <th>Join</th>
+                    </tr>
+                </thead>
+                <tbody id="find-games-body">
+                    <!-- Placeholder rows (replace later with Flask/Jinja or JS fetch) -->
+                    <tr>
+                        <td>Michael</td>
+                        <td><input type="text" class="code-input" placeholder="Enter code..." /></td>
+                        <td><button class="button" onclick="joinGame('Michael', this)">Join</button></td>
+                    </tr>
+                    <tr>
+                        <td>Ben</td>
+                        <td><input type="text" class="code-input" placeholder="Enter code..." /></td>
+                        <td><button class="button" onclick="joinGame('Ben', this)">Join</button></td>
+                    </tr>
+                    <tr>
+                        <td>Salvador</td>
+                        <td><input type="text" class="code-input" placeholder="Enter code..." /></td>
+                        <td><button class="button" onclick="joinGame('Salvador', this)">Join</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="find-games-actions">
+            <button class="button" onclick="refreshGames()">Refresh List</button>
+        </div>
+   </section>
+
+   <section class="footer">
+        <h3>2025 Checkers by: Michael Becerril, Ben Huefner, and Salvador Plancarte</h3>
+   </section>
+</body>
+</html>
