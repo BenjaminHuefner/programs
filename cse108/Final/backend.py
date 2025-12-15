@@ -247,8 +247,8 @@ def game_redirect():
 @app.route("/game", methods=['POST', 'GET'])
 @login_required
 def game():
-    return "test"
-    # return render_template('login.html')
+    # return "test"
+    return render_template('game.html')
     # return "test"
 
 @app.route("/logout")
@@ -257,118 +257,40 @@ def logout():
         logout_user()
     return redirect(url_for('login'))
 
+@socketio.on('connect')
+def handle_connect():
+    if current_user.is_authenticated:
+        print(f'Client connected')
+        emit('connected', {'message': 'Successfully connected to server'})
+    else:
+        print(f'Unauthenticated client attempted to connect')
+        return False  # Disconnect unauthenticated clients
+
+@socketio.on('join')
+def startConnection():
+    game = Game.query.filter( ( (Game.player1_id==current_user.id) | (Game.player2_id==current_user.id) )).first()
+    if game is not None:
+        join_room(str(game.id))
+        if(game.player1_id == current_user.id):
+            playerColor = game.player1color
+            if(game.numplayers==1):
+                emit('joined','1'+str(playerColor)+'0'+str(game.id),room=str(game.id))
+            else:
+                emit('joined','1'+str(playerColor)+'1'+str(game.id),room=str(game.id))
+        elif(game.player2_id == current_user.id):
+            if(game.player1color == 1):
+                playerColor = 2
+            else:
+                playerColor = 1
+            emit('joined','2'+str(playerColor)+'1'+str(game.id),room=str(game.id))
 
 
+    print(f'Client joined')
 
-
-# def background_thread():
-#     """Example of how to send server generated events to clients."""
-#     count = 0
-#     while True:
-#         socketio.sleep(10)
-#         count += 1
-#         socketio.emit('my_response',
-#                       {'data': 'Server generated event', 'count': count})
-
-
-# @app.route('/')
-# def index():
-#     return render_template('index.html', async_mode=socketio.async_mode)
-
-
-# @socketio.event
-# def my_event(message):
-#     session['receive_count'] = session.get('receive_count', 0) + 1
-#     emit('my_response',
-#          {'data': message['data'], 'count': session['receive_count']})
-
-
-# @socketio.event
-# def my_broadcast_event(message):
-#     session['receive_count'] = session.get('receive_count', 0) + 1
-#     emit('my_response',
-#          {'data': message['data'], 'count': session['receive_count']},
-#          broadcast=True)
-
-
-# @socketio.event
-# def join(message):
-#     join_room(message['room'])
-#     session['receive_count'] = session.get('receive_count', 0) + 1
-#     emit('my_response',
-#          {'data': 'In rooms: ' + ', '.join(rooms()),
-#           'count': session['receive_count']})
-
-
-# @socketio.event
-# def leave(message):
-#     leave_room(message['room'])
-#     session['receive_count'] = session.get('receive_count', 0) + 1
-#     emit('my_response',
-#          {'data': 'In rooms: ' + ', '.join(rooms()),
-#           'count': session['receive_count']})
-
-
-# @socketio.on('close_room')
-# def on_close_room(message):
-#     session['receive_count'] = session.get('receive_count', 0) + 1
-#     emit('my_response', {'data': 'Room ' + message['room'] + ' is closing.',
-#                          'count': session['receive_count']},
-#          to=message['room'])
-#     close_room(message['room'])
-
-
-# @socketio.event
-# def my_room_event(message):
-#     session['receive_count'] = session.get('receive_count', 0) + 1
-#     emit('my_response',
-#          {'data': message['data'], 'count': session['receive_count']},
-#          to=message['room'])
-
-
-# @socketio.on('*')
-# def catch_all(event, data):
-#     session['receive_count'] = session.get('receive_count', 0) + 1
-#     emit('my_response',
-#          {'data': [event, data], 'count': session['receive_count']})
-
-
-# @socketio.event
-# def disconnect_request():
-#     @copy_current_request_context
-#     def can_disconnect():
-#         disconnect()
-
-#     session['receive_count'] = session.get('receive_count', 0) + 1
-#     # for this emit we use a callback function
-#     # when the callback function is invoked we know that the message has been
-#     # received and it is safe to disconnect
-#     emit('my_response',
-#          {'data': 'Disconnected!', 'count': session['receive_count']},
-#          callback=can_disconnect)
-
-
-# @socketio.event
-# def my_ping():
-#     emit('my_pong')
-
-
-# @socketio.event
-# def connect():
-#     global thread
-#     with thread_lock:
-#         if thread is None:
-#             thread = socketio.start_background_task(background_thread)
-#     emit('my_response', {'data': 'Connected', 'count': 0})
-
-
-# @socketio.on('disconnect')
-# def test_disconnect(reason):
-#     print('Client disconnected', request.sid, reason)
-
-
-
+@socketio.on('disconnect')
+def handle_disconnect():
+    print(f'Client disconnected')
 
 
 if __name__ == "__main__":
-    app.run()
+    socketio.run(app)

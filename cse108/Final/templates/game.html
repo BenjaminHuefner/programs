@@ -4,20 +4,30 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Checkers - Game</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
     <nav>
-        <img src="checkerslogo.png" alt="Checkers Logo" class="logo">
+        <img src="/static/checkerslogo.png" alt="Checkers Logo" class="logo">
         <span class="span-logo">Checkers 2025</span>
         <h3><span id="red-player-name" style="color: red;">Red</span> vs <span id="black-player-name" style="color: black;">Black</span></h3>
-        <a href="/logout">Sign Out</a>        
+        <!-- <a href="/logout">Sign Out</a>         -->
    </nav>
-    <div class="game-container">
-        <div id="game-board"></div>
-        <div id="game-status"></div>
-        <!-- for testing purposes, comment out in production -->
-        <button id="restart-button" onclick="startNewGame()">Restart Game</button> 
+    <!-- CONNECTING SCREEN  -->
+    <!-- <div id="connecting-screen" class="overlay">
+        <div class="overlay-card">
+            <h2>Connecting to opponent...</h2>
+            <button onclick="stopConnecting()">Stop Connecting</button>
+        </div>
+    </div> -->
+
+    <!-- GAME HIDDEN UNTIL CONNECTED -->
+    <div id="game-container">
+        <div class="game-content">
+            <div id="game-board"></div>
+            <div id="game-status"></div>
+            <button id="restart-button" onclick="startNewGame()">Restart Game</button>
+        </div>
     </div>
     
     <div id="game-over-overlay" class="overlay">
@@ -28,10 +38,14 @@
             </div>
         </div>
     </div>
-    
-    <script src="game.js" charset="utf-8"></script>
-</body>
+
+    <!-- Footer INSIDE the body -->
     <section class="footer">
         <h3>2025 Checkers by: Michael Becerril, Ben Huefner, and Salvador Plancarte</h3>
     </section>
+
+    <!-- <script src="/static/socket.io.min.js"></script> -->
+    <script src="https://cdn.socket.io/4.5.0/socket.io.min.js"></script>
+    <script src="/static/game.js"></script>
+</body>
 </html>

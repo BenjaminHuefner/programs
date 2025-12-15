@@ -4,10 +4,127 @@ const rows = 8;
 const cols = 8;
 let selectedPiece = null;
 let currentPlayer = 'red';
+let thisPlayerColor = 'red';
 let redPieces = 12;
 let blackPieces = 12;
 let isMultiCapture = false;
 let multiCapturePiece = null;
+
+let lastRow =0;
+let lastCol =0;
+let nextRow=0;
+let nextCol=0;
+
+const socket = io({
+    transports: ['websocket', 'polling'],
+    reconnection: true,
+    reconnectionAttempts: 10,
+    reconnectionDelay: 1000
+});
+
+// Connection gate: 0 = not connected 
+let connected = 0;
+
+socket.on('connect', () => {
+    console.log('Connected to server');
+    connected = true;
+});
+
+// Handle connection error
+socket.on('connect_error', (error) => {
+    console.error('Connection error:', error);
+    connected = false;
+    showError('Failed to connect to server. Please refresh.');
+});
+
+// Handle disconnection
+socket.on('disconnect', (reason) => {
+    console.log('Disconnected:', reason);
+    connected = false;
+    
+    if (reason === 'io server disconnect') {
+        showError('Disconnected by server. Reconnecting...');
+    }
+});
+
+socket.on('joined', (data) => {
+    console.log(data);
+    if(data[2]==1){
+        startGame();
+        // updateConnectionUI();
+    }
+    
+});
+window.onload = () => {
+    // Show connecting screen by default
+    // document.getElementById("connecting-screen").style.display = "flex";
+
+        // Handle successful connection
+    
+
+    
+    socket.emit('join');
+    
+};
+
+
+// START GAME (once both players are connected)
+
+function startGame() {
+    // Initialize game
+    setPlayerNames();
+
+    // Load saved state or create new board
+   
+    const savedState = (typeof loadBoardState === "function") ? loadBoardState() : null;
+
+    if (typeof createBoard === "function") {
+        createBoard(savedState);
+        if (isMultiCapture && multiCapturePiece) {
+            selectPiece(multiCapturePiece);
+        }
+    }
+
+    if (typeof updateGameStatus === "function") {
+        updateGameStatus();
+    }
+
+    // document.getElementById("connecting-screen").style.display = "none";
+
+    connected = 1;
+}
+
+// STOP CONNECTING
+function stopConnecting() {
+    window.location.href = "find_games.html";
+}
+
+// BLOCK INPUT IF NOT CONNECTED
+// function handleSquareClick(e) {
+//     if (connected === 0) return;
+// }
+
+// function getConnectedFromURL() {
+//     const urlParams = new URLSearchParams(window.location.search);
+//     const c = parseInt(urlParams.get('connected'), 10);
+//     return Number.isFinite(c) ? c : 0;
+// }
+
+// function updateConnectionUI() {
+//     const connectingScreen = document.getElementById('connecting-screen');
+//     const gameContainer = document.getElementById('game-container');
+
+//     if (connected === 0) {
+//         if (connectingScreen) connectingScreen.style.display = 'flex';
+//         if (gameContainer) gameContainer.style.display = 'none';
+//         if (board) board.style.pointerEvents = 'none';
+//     } else {
+//         if (connectingScreen) connectingScreen.style.display = 'none';
+//         if (gameContainer) gameContainer.style.display = 'block';
+//         if (board) board.style.pointerEvents = (connected === 1) ? 'auto' : 'none';
+//     // updateConnectionUI();
+//     }
+// }
 
 // game board creation
 function createBoard(boardState = null) {
@@ -69,6 +186,9 @@ function createBoard(boardState = null) {
 
 // click event handler
 function handleSquareClick(e) {
+    if(!connected){
+        return;
+    }
     const square = e.target.classList.contains('square') ? e.target : e.target.parentElement;
     const row = parseInt(square.dataset.row);
     const col = parseInt(square.dataset.col);
@@ -96,6 +216,9 @@ function handleSquareClick(e) {
 
 // piece selection
 function selectPiece(piece) {
+    if(!connected){
+        return;
+    }
     if (selectedPiece) {
         selectedPiece.classList.remove('selected');
         clearAvailableMoves();
@@ -466,18 +589,7 @@ function setPlayerNames() {
     if (blackNameElement) blackNameElement.textContent = blackPlayer;
 }
 
-// Initialize game
-setPlayerNames();
 
-// Load saved state or create new board
-const savedState = loadBoardState();
-createBoard(savedState);
-updateGameStatus();
-if (savedState) {
-    if (isMultiCapture && multiCapturePiece) {
-        selectPiece(multiCapturePiece);
-    }
-}
 
 // Clear saved state when starting a new game
 function startNewGame() {
