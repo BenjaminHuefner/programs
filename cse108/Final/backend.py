@@ -11,6 +11,7 @@ async_mode = None
 
 
 import json
+import random
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from flask_admin import Admin
@@ -51,6 +52,21 @@ class User(UserMixin,db.Model):
     def __str__(self):
         return self.name
 
+class Game(db.Model):
+    __tablename__ = 'games'
+    id = db.Column(db.Integer, primary_key=True)
+    player1_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    player2_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True, default=None)
+    code = db.Column(db.String, nullable=True, default=None)
+    numplayers = db.Column(db.Integer, nullable=False, default=0)
+    player1color = db.Column(db.Integer, nullable=False, default=0)# 1:black 2:red
+    currTurn = db.Column(db.Integer, nullable=False, default=1)# 1:black 2:red
+    winner = db.Column(db.Integer, nullable=False, default=0) # 0:none 1:black 2:red
+    state = db.Column(db.JSON, nullable=False)
+
+    def __str__(self):
+        return self.name
+
 
 class protectedModelView(ModelView):
     def is_accessible(self):
@@ -70,6 +86,7 @@ class protectedIndexView(AdminIndexView):
 
 admin = Admin(app, name='microblog', index_view=protectedIndexView())
 admin.add_view(protectedModelView(User, db.session))
+admin.add_view(protectedModelView(Game, db.session))
 admin.add_link(MenuLink(name='Logout', category='', url='/logout'))
 #admin: adminpassuncrackable
 #test: testpass123123
@@ -139,9 +156,100 @@ def signupredirect():
 @app.route("/findGame")
 @login_required
 def findGame():
-    return "test"
-    # return render_template('find_games.html')
+    # return "test"
+    return render_template('find_games.html')
 
+
+@app.route("/getGames")
+@login_required
+def getGames():
+    allGames=[]
+    games = Game.query.filter_by(numplayers=1).all()
+    for game in games:
+        host = User.query.filter_by(id=game.player1_id).first()
+        if(game.code is not None):
+            codeRequired = True
+        else:
+            codeRequired = False
+        allGames.append( {"username": host.name, "codeReq": codeRequired} )
+
+    if(allGames is not None):
+        return json.dumps(allGames)
+    return "0"
+
+@app.route("/createGame", methods=['POST'])
+@login_required
+def createGame():
+    if request.is_json:
+        data = request.get_json()
+        codeRequired = data.get('codeRequired', False)
+        gameCode = data.get('gameCode', None)
+        if( (not Game.query.filter_by(player1_id=current_user.id).first()) and (not Game.query.filter_by(player2_id=current_user.id).first()) ):
+            newGame= Game(player1_id=current_user.id, numplayers=1, state={})
+            if codeRequired:
+                newGame.code=gameCode
+            if random.random()>=0.5:
+                newGame.player1color=1
+            else:
+                newGame.player1color=2
+            newGame.currTurn=1
+            initGame=[]
+            for i in range(1,7):
+                for j in range(1,5):
+                    # initGame.append({"x": } )
+                    offset= i%2
+                    if(i<4):
+                        initGame.append({"x": i, "y": (2*(j-1))+offset+1, "color": 1,"captured": False,"king": False, "multicapture": False})
+                    else:
+                        initGame.append({"x": i+2, "y": (2*(j-1))+offset+1, "color": 2, "captured":False,"king": False, "multicapture": False})
+                    
+            state=json.dumps(initGame)
+            newGame.state=state
+            db.session.add(newGame)
+            print("test")
+            db.session.commit()
+            return "2"
+        return "0" 
+    return "0"
+
+@app.route("/joinGame", methods=['POST'])
+@login_required
+def joinGame():
+    if request.is_json:
+        data = request.get_json()
+        hostName = data.get('hostName')
+        gameCode = data.get('gameCode', None)
+        if( (not Game.query.filter_by(player1_id=current_user.id).first()) and (not Game.query.filter_by(player2_id=current_user.id).first()) ):
+            hostUser = User.query.filter_by(name=hostName).first()
+            game = Game.query.filter_by(player1_id=hostUser.id, numplayers=1).first()
+            if(game is None):
+                print("no game")
+                return "1"
+            if(game.code is not None):
+                if(game.code != gameCode):
+                    print("wrong code")
+                    return "0"
+            print("test2")
+            game.player2_id=current_user.id
+            game.numplayers=2
+            db.session.commit()
+            return "2"
+        return "0" 
+    return "0"
+
+    # return "test"
+
+
+@app.route("/game_redirect")
+def game_redirect():
+    return redirect(url_for('game'))
+
+@app.route("/game", methods=['POST', 'GET'])
+@login_required
+def game():
+    return "test"
+    # return render_template('login.html')
+    # return "test"
 
 @app.route("/logout")
 def logout():
@@ -153,14 +261,14 @@ def logout():
 
 
 
-def background_thread():
-    """Example of how to send server generated events to clients."""
-    count = 0
-    while True:
-        socketio.sleep(10)
-        count += 1
-        socketio.emit('my_response',
-                      {'data': 'Server generated event', 'count': count})
+# def background_thread():
+#     """Example of how to send server generated events to clients."""
+#     count = 0
+#     while True:
+#         socketio.sleep(10)
+#         count += 1
+#         socketio.emit('my_response',
+#                       {'data': 'Server generated event', 'count': count})
 
 
 # @app.route('/')
@@ -168,95 +276,95 @@ def background_thread():
 #     return render_template('index.html', async_mode=socketio.async_mode)
 
 
-@socketio.event
-def my_event(message):
-    session['receive_count'] = session.get('receive_count', 0) + 1
-    emit('my_response',
-         {'data': message['data'], 'count': session['receive_count']})
+# @socketio.event
+# def my_event(message):
+#     session['receive_count'] = session.get('receive_count', 0) + 1
+#     emit('my_response',
+#          {'data': message['data'], 'count': session['receive_count']})
 
 
-@socketio.event
-def my_broadcast_event(message):
-    session['receive_count'] = session.get('receive_count', 0) + 1
-    emit('my_response',
-         {'data': message['data'], 'count': session['receive_count']},
-         broadcast=True)
+# @socketio.event
+# def my_broadcast_event(message):
+#     session['receive_count'] = session.get('receive_count', 0) + 1
+#     emit('my_response',
+#          {'data': message['data'], 'count': session['receive_count']},
+#          broadcast=True)
 
 
-@socketio.event
-def join(message):
-    join_room(message['room'])
-    session['receive_count'] = session.get('receive_count', 0) + 1
-    emit('my_response',
-         {'data': 'In rooms: ' + ', '.join(rooms()),
-          'count': session['receive_count']})
+# @socketio.event
+# def join(message):
+#     join_room(message['room'])
+#     session['receive_count'] = session.get('receive_count', 0) + 1
+#     emit('my_response',
+#          {'data': 'In rooms: ' + ', '.join(rooms()),
+#           'count': session['receive_count']})
 
 
-@socketio.event
-def leave(message):
-    leave_room(message['room'])
-    session['receive_count'] = session.get('receive_count', 0) + 1
-    emit('my_response',
-         {'data': 'In rooms: ' + ', '.join(rooms()),
-          'count': session['receive_count']})
+# @socketio.event
+# def leave(message):
+#     leave_room(message['room'])
+#     session['receive_count'] = session.get('receive_count', 0) + 1
+#     emit('my_response',
+#          {'data': 'In rooms: ' + ', '.join(rooms()),
+#           'count': session['receive_count']})
 
 
-@socketio.on('close_room')
-def on_close_room(message):
-    session['receive_count'] = session.get('receive_count', 0) + 1
-    emit('my_response', {'data': 'Room ' + message['room'] + ' is closing.',
-                         'count': session['receive_count']},
-         to=message['room'])
-    close_room(message['room'])
+# @socketio.on('close_room')
+# def on_close_room(message):
+#     session['receive_count'] = session.get('receive_count', 0) + 1
+#     emit('my_response', {'data': 'Room ' + message['room'] + ' is closing.',
+#                          'count': session['receive_count']},
+#          to=message['room'])
+#     close_room(message['room'])
 
 
-@socketio.event
-def my_room_event(message):
-    session['receive_count'] = session.get('receive_count', 0) + 1
-    emit('my_response',
-         {'data': message['data'], 'count': session['receive_count']},
-         to=message['room'])
+# @socketio.event
+# def my_room_event(message):
+#     session['receive_count'] = session.get('receive_count', 0) + 1
+#     emit('my_response',
+#          {'data': message['data'], 'count': session['receive_count']},
+#          to=message['room'])
 
 
-@socketio.on('*')
-def catch_all(event, data):
-    session['receive_count'] = session.get('receive_count', 0) + 1
-    emit('my_response',
-         {'data': [event, data], 'count': session['receive_count']})
+# @socketio.on('*')
+# def catch_all(event, data):
+#     session['receive_count'] = session.get('receive_count', 0) + 1
+#     emit('my_response',
+#          {'data': [event, data], 'count': session['receive_count']})
 
 
-@socketio.event
-def disconnect_request():
-    @copy_current_request_context
-    def can_disconnect():
-        disconnect()
+# @socketio.event
+# def disconnect_request():
+#     @copy_current_request_context
+#     def can_disconnect():
+#         disconnect()
 
-    session['receive_count'] = session.get('receive_count', 0) + 1
-    # for this emit we use a callback function
-    # when the callback function is invoked we know that the message has been
-    # received and it is safe to disconnect
-    emit('my_response',
-         {'data': 'Disconnected!', 'count': session['receive_count']},
-         callback=can_disconnect)
-
-
-@socketio.event
-def my_ping():
-    emit('my_pong')
+#     session['receive_count'] = session.get('receive_count', 0) + 1
+#     # for this emit we use a callback function
+#     # when the callback function is invoked we know that the message has been
+#     # received and it is safe to disconnect
+#     emit('my_response',
+#          {'data': 'Disconnected!', 'count': session['receive_count']},
+#          callback=can_disconnect)
 
 
-@socketio.event
-def connect():
-    global thread
-    with thread_lock:
-        if thread is None:
-            thread = socketio.start_background_task(background_thread)
-    emit('my_response', {'data': 'Connected', 'count': 0})
+# @socketio.event
+# def my_ping():
+#     emit('my_pong')
 
 
-@socketio.on('disconnect')
-def test_disconnect(reason):
-    print('Client disconnected', request.sid, reason)
+# @socketio.event
+# def connect():
+#     global thread
+#     with thread_lock:
+#         if thread is None:
+#             thread = socketio.start_background_task(background_thread)
+#     emit('my_response', {'data': 'Connected', 'count': 0})
+
+
+# @socketio.on('disconnect')
+# def test_disconnect(reason):
+#     print('Client disconnected', request.sid, reason)
 
 
 

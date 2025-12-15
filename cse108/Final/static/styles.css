@@ -41,11 +41,11 @@ nav a:last-child {
 .logo {
     position: absolute;
     left: 100px;
-    height: 50px; /* Set a specific height for the logo */
-    width: auto; /* Maintain the image's aspect ratio */
+    height: 50px;
+    width: auto; 
 }
 
-span {
+.span-logo {
     color: white;
     margin: 0 15px;
     text-decoration: none;
@@ -155,6 +155,7 @@ button:active {
     transform: translateY(2px);
 }
 
+
 .message {
     margin-top: 15px;
     padding: 12px;
@@ -223,28 +224,163 @@ button:active {
 .find-games-actions {
     display: flex;
     justify-content: center;
+    gap: 20px;
     margin-top: 30px;
+}
+
+.delete-button {
+    background: rgb(200, 100, 100);
+    width: 100%;
+    padding: 12px 20px;
+}
+
+.delete-button:hover {
+    background: rgb(170, 70, 70);
+}
+
+/* OVERLAY FOR GAME CREATION */
+
+.overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.overlay-card {
+    background: rgb(245, 245, 245);
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
+    padding: 40px;
+    text-align: center;
+    width: 500px;
+    max-width: 90%;
+}
+
+.overlay-card h2 {
+    font-size: 36px;
+    color: rgb(140, 125, 120);
+    margin-bottom: 20px;
+}
+
+.overlay-card p {
+    font-size: 20px;
+    color: rgb(80, 80, 80);
+    margin-bottom: 30px;
+}
+
+.overlay-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    align-items: center;
+}
+
+.overlay-buttons .button {
+    width: 100%;
+    max-width: 350px;
+    padding: 15px 20px;
+}
+
+.cancel-button {
+    background: rgb(200, 200, 200);
+    border-color: rgb(150, 150, 150);
+}
+
+.cancel-button:hover {
+    background: rgb(150, 150, 150);
+}
+
+.overlay-form {
+    margin-bottom: 10px;
+}
+
+.overlay-card #message-display-creategame {
+    min-height: 50px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.checkbox-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.checkbox-row input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.checkbox-row label {
+    font-size: 18px;
+    color: rgb(80, 80, 80);
+    cursor: pointer;
+    user-select: none;
+}
+
+.code-input-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
+    padding: 0 20px;
+}
+
+.code-input-container label {
+    font-size: 16px;
+    color: rgb(140, 125, 120);
+    font-weight: 600;
+}
+
+.code-input-container input[type="text"] {
+    width: 100%;
+    font-size: 1.2em;
+    padding: 10px;
+    border: 1px solid gray;
+    border-radius: 5px;
 }
 
 /* GAME PAGE */
 
+.game-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    min-height: calc(100vh - 100px - 80px);
+    gap: 20px;
+}
+
 #game-board {
     display: grid;
-    grid-template-columns: repeat(8, 60px);
-    grid-template-rows: repeat(8, 60px);
+    grid-template-columns: repeat(8, 1fr);
+    grid-template-rows: repeat(8, 1fr);
     gap: 0;
     border: 2px solid #333;
-    width: fit-content;
-    position: absolute;
-    top: 40%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    width: min(90vw, 90vh, 600px);
+    height: min(90vw, 90vh, 600px);
+    aspect-ratio: 1 / 1;
+    box-sizing: border-box;
 }
 
 .square {
-    width: 60px;
-    height: 60px;
+    width: 100%;
+    height: 100%;
     position: relative;
+    box-sizing: border-box;
 }
 
 .black {
@@ -256,11 +392,10 @@ button:active {
 }
 
 .piece {
-    width: 50px;
-    height: 50px;
+    width: 80%;
+    height: 80%;
     border-radius: 50%;
     margin: auto;
-    margin-top: 5px;
     position: absolute;
     left: 0;
     right: 0;
@@ -287,13 +422,26 @@ button:active {
 }
 
 #game-status{
-    position: absolute;
-    top: 40%;
-    left: 50%;
-    transform: translate(-50%, calc(240px + 20px));
-    font-size: 1.5em;
+    font-size: clamp(1.2em, 3vw, 1.8em);
     text-align: center;
     white-space: nowrap;
+    margin-top: 10px;
+}
+
+#restart-button {
+    padding: 10px 20px;
+    font-size: clamp(0.9em, 2.5vw, 1.1em);
+    background-color: rgb(140, 125, 120);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+#restart-button:hover {
+    background-color: rgb(120, 105, 100);
 }
 
 .square.available-move {
@@ -306,10 +454,9 @@ button:active {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 50px;
-    height: 50px;
+    width: 80%;
+    height: 80%;
     border-radius: 50%;
-    /* background-color: rgb(160, 160, 0);  */
     box-shadow: inset 0 0 20px rgba(0, 255, 0, 0.5);
     outline: 3px solid yellow;
     pointer-events: none;

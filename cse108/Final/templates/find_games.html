@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Checkers - Find Games</title>
-    <link rel="stylesheet" href="styles.css">
-    <script src="find_games.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="/static/styles.css">
+    <script src="/static/find_games.js" charset="utf-8"></script>
 </head>
 <body>
    <nav>
-        <img src="checkerslogo.png" alt="Checkers Logo" class="logo">
-        <span>Checkers 2025</span>
+        <img src="/static/checkerslogo.png" alt="Checkers Logo" class="logo">
+        <span class="span-logo">Checkers 2025</span>
         <h3>Find Games</h3>
         <a href="/logout">Sign Out</a>
    </nav>
@@ -23,6 +23,10 @@
         <div id="message-display-findgames"></div>
 
         <div class="find-games-table-wrap">
+            <div class="find-games-actions">
+                <button class="button" onclick="refreshGames()">Refresh List</button>
+                <button class="button" onclick="createGame()">Create Game</button>
+            </div>
             <table class="find-games-table">
                 <thead>
                     <tr>
@@ -33,7 +37,7 @@
                 </thead>
                 <tbody id="find-games-body">
                     <!-- Placeholder rows (replace later with Flask/Jinja or JS fetch) -->
-                    <tr>
+                    <!-- <tr>
                         <td>Michael</td>
                         <td><input type="text" class="code-input" placeholder="Enter code..." /></td>
                         <td><button class="button" onclick="joinGame('Michael', this)">Join</button></td>
@@ -46,19 +50,43 @@
                     <tr>
                         <td>Salvador</td>
                         <td><input type="text" class="code-input" placeholder="Enter code..." /></td>
-                        <td><button class="button" onclick="joinGame('Salvador', this)">Join</button></td>
+                        <td><button class="button" onclick="joinGame('Salvador', this)">Join</button></td> -->
                     </tr>
                 </tbody>
             </table>
         </div>
 
-        <div class="find-games-actions">
-            <button class="button" onclick="refreshGames()">Refresh List</button>
-        </div>
    </section>
+
+   <div id="create-game-overlay" class="overlay">
+       <div class="overlay-card">
+           <h2>Create New Game</h2>
+           <div class="overlay-form">
+               <div class="checkbox-row">
+                   <input type="checkbox" id="require-code-checkbox" onchange="toggleCodeInput()">
+                   <label for="require-code-checkbox">Require code to join</label>
+               </div>
+               <div id="code-input-container" class="code-input-container" style="display: none;">
+                   <label for="game-code-input">Enter code:</label>
+                   <input type="text" id="game-code-input" placeholder="Enter game code...">
+               </div>
+           </div>
+            <div id="message-display-creategame"></div>
+           <div class="overlay-buttons">
+               <button class="button" onclick="handleCreateGame()">Create Game</button>
+               <button class="button cancel-button" onclick="closeCreateGameOverlay()">Cancel</button>
+           </div>
+       </div>
+   </div>
 
    <section class="footer">
         <h3>2025 Checkers by: Michael Becerril, Ben Huefner, and Salvador Plancarte</h3>
    </section>
 </body>
+<script>
+    // Initial fetch of available games when page loads
+    document.addEventListener('DOMContentLoaded', (event) => {
+        refreshGames();
+    });
+</script>
 </html>
