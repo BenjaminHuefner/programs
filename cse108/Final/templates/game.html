@@ -14,19 +14,20 @@
         <!-- <a href="/logout">Sign Out</a>         -->
    </nav>
     <!-- CONNECTING SCREEN  -->
-    <!-- <div id="connecting-screen" class="overlay">
-        <div class="overlay-card">
-            <h2>Connecting to opponent...</h2>
-            <button onclick="stopConnecting()">Stop Connecting</button>
-        </div>
-    </div> -->
 
     <!-- GAME HIDDEN UNTIL CONNECTED -->
-    <div id="game-container">
+    <div id="game-container"style="display:none">
         <div class="game-content">
             <div id="game-board"></div>
             <div id="game-status"></div>
-            <button id="restart-button" onclick="startNewGame()">Restart Game</button>
+            <button id="restart-button" onclick="startNewGame()">Abort Game</button>
+        </div>
+    </div>
+
+    <div id="connecting-screen" class="overlay">
+        <div class="overlay-card">
+            <h2>Connecting to opponent...</h2>
+            <button onclick="stopConnecting()">Stop Connecting</button>
         </div>
     </div>
     
@@ -34,7 +35,7 @@
         <div class="overlay-card">
             <h2 id="winner-message">Winner!</h2>
             <div class="overlay-buttons">
-                <button class="button" onclick="window.location.href='find_games.html'">Return to Lobby</button>
+                <button class="button" onclick="window.location.href='deleteGame'">Return to Lobby</button>
             </div>
         </div>
     </div>

@@ -9,7 +9,7 @@ from flask_socketio import SocketIO, emit, join_room, leave_room, \
 # the best option based on installed packages.
 async_mode = None
 
-
+import time
 import json
 import random
 from flask_cors import CORS
@@ -57,6 +57,7 @@ class Game(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     player1_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     player2_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True, default=None)
+    fresh= db.Column(db.Integer,nullable=False,default=1)
     code = db.Column(db.String, nullable=True, default=None)
     numplayers = db.Column(db.Integer, nullable=False, default=0)
     player1color = db.Column(db.Integer, nullable=False, default=0)# 1:black 2:red
@@ -250,12 +251,41 @@ def game():
     # return "test"
     return render_template('game.html')
     # return "test"
+@app.route("/getNames")
+@login_required
+def getNames():
+    allNames={}
+    game= Game.query.filter( ( (Game.player1_id==current_user.id) | (Game.player2_id==current_user.id) )).first()
+    if(game.numplayers==2 and game.player1color==1):
+        allNames['bn']=User.query.filter(User.id==game.player1_id).first().name
+        allNames['rn']=User.query.filter(User.id==game.player2_id).first().name
+    elif(game.numplayers==2):
+        allNames['rn']=User.query.filter(User.id==game.player1_id).first().name
+        allNames['bn']=User.query.filter(User.id==game.player2_id).first().name
+    if(allNames is not None):
+        return json.dumps(allNames)
+    return "0"
+
+@app.route("/deleteGame")
+def deleteGame():
+    game=Game.query.filter( ( (Game.player1_id==current_user.id) | (Game.player2_id==current_user.id) )).first()
+    if(game is not None):
+        db.session.delete(game)
+        db.session.commit()
+    return redirect(url_for('findGame'))
 
 @app.route("/logout")
 def logout():
     if(current_user.is_authenticated):
         logout_user()
     return redirect(url_for('login'))
+
+# def whichColor(game,lastCol,lastRow,nextCol,nextRow):
+#     currState=json.loads(game.state)
+#     for state in currState:
+#         if(state['x']==int(lastRow) and state['y']==int(lastCol)):
+#             return int(state['color'])
+#     return 0
 
 @socketio.on('connect')
 def handle_connect():
@@ -271,6 +301,9 @@ def startConnection():
     game = Game.query.filter( ( (Game.player1_id==current_user.id) | (Game.player2_id==current_user.id) )).first()
     if game is not None:
         join_room(str(game.id))
+        join_room(current_user.name)
+        if(game.fresh):
+            emit('clear',room=str(game.id))
         if(game.player1_id == current_user.id):
             playerColor = game.player1color
             if(game.numplayers==1):
@@ -286,6 +319,33 @@ def startConnection():
 
 
     print(f'Client joined')
+
+@socketio.on('move')
+def handleMove(data):
+    lastCol=data[0]
+    lastRow=data[1]
+    nextCol=data[2]
+    nextRow=data[3]
+    gameID=data[4:]
+    game=Game.query.filter(Game.id==gameID).first()
+    if(game is not None and game.numplayers==2 and (game.player1_id==current_user.id or game.player2_id==current_user.id)):
+        game.fresh=0
+        db.session.commit()
+        if(game.player1_id==current_user.id):
+            other=User.query.filter(User.id==game.player2_id).first()
+            other=other.name
+        else:
+            other=User.query.filter(User.id==game.player1_id).first()
+            other=other.name
+        emit('move',str(lastCol)+str(lastRow)+str(nextCol)+str(nextRow),room=other)
+        print(data)
+
+@socketio.on('win')
+def handleWin(data):
+    winner=data[0]
+    gameID=data[4:]
+    emit('win',str(winner),room=gameID)
+
 
 @socketio.on('disconnect')
 def handle_disconnect():

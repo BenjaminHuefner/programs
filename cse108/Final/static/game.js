@@ -1,19 +1,27 @@
+const url = "http://127.0.0.1:5000/"
 const board = document.getElementById('game-board');
 const gameStatus = document.getElementById('game-status');
 const rows = 8;
 const cols = 8;
 let selectedPiece = null;
 let currentPlayer = 'red';
-let thisPlayerColor = 'red';
+let thisPlayerColor = 'none';
 let redPieces = 12;
 let blackPieces = 12;
 let isMultiCapture = false;
 let multiCapturePiece = null;
+let gameID='';
+let bP='';
+let rP='';
 
 let lastRow =0;
 let lastCol =0;
 let nextRow=0;
 let nextCol=0;
+let lastColor='none';
+let temp=0;
+
+let won=0;
 
 const socket = io({
     transports: ['websocket', 'polling'],
@@ -49,15 +57,89 @@ socket.on('disconnect', (reason) => {
 
 socket.on('joined', (data) => {
     console.log(data);
+    if(thisPlayerColor=='none'){
+        if(data[1]=='1'){
+            thisPlayerColor='black';
+        }else{
+            thisPlayerColor='red'
+        }
+    }
     if(data[2]==1){
         startGame();
         // updateConnectionUI();
     }
+    gameID=data.substring(3);
+    fetch(url+"getNames", {
+        method: "GET",
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error("HTTP Error: "+response.status);
+        }
+        return response.json();
+      })
+      .then(data => {
+        console.log("Success:", data);
+        if(data && data!="0"){
+            bP=data.bn;
+            rP=data.rn;
+
+        }else{
+            bP='Black';
+            rP='Red'
+        }
+        setPlayerNames();
+        updateGameStatus();
+
+      })
+    .catch((error) => {
+        console.error("Error:", error);
+    });
+});
+socket.on('clear', () => {
+    clearBoardState();
+    
     
 });
+socket.on('move',(data)=>{
+    console.log(data);
+    lastCol=parseInt(data[0]);
+    lastRow=parseInt(data[1]);
+    nextCol=parseInt(data[2]);
+    nextRow=parseInt(data[3]);
+    
+    temp=0;
+    document.querySelectorAll('.piece').forEach(piece => {
+            if(!temp && parseInt(piece.dataset.row)==lastRow && parseInt(piece.dataset.col)==lastCol){
+                temp=1
+                movePiece(piece,nextRow,nextCol);
+            }
+    });
+
+});
+socket.on('win',(data)=>{
+    console.log(data);
+    if(data=="1" && !won){
+        const { blackPlayer } = getPlayerNames();
+        showGameOverOverlay(blackPlayer, 'black', 'wins by forfeit');
+        clearBoardState();
+        endGame();
+    }else{
+        if(data=='2' && !won){
+            const { redPlayer } = getPlayerNames();
+            showGameOverOverlay(redPlayer, 'red', 'wins by forfeit');
+            clearBoardState();
+            endGame();
+        }
+    }
+})
 window.onload = () => {
     // Show connecting screen by default
-    // document.getElementById("connecting-screen").style.display = "flex";
+    document.getElementById("connecting-screen").style.display = "flex";
+    document.getElementById("game-container").style.display = "none";
 
         // Handle successful connection
     
@@ -89,14 +171,15 @@ function startGame() {
         updateGameStatus();
     }
 
-    // document.getElementById("connecting-screen").style.display = "none";
+    document.getElementById("connecting-screen").style.display = "none";
+    document.getElementById("game-container").style.display = "flex";
 
     connected = 1;
 }
 
 // STOP CONNECTING
 function stopConnecting() {
-    window.location.href = "find_games.html";
+    window.location.href = url+"deleteGame";
 }
 
 // BLOCK INPUT IF NOT CONNECTED
@@ -146,6 +229,7 @@ function createBoard(boardState = null) {
     // restores from board state if provided
     if (boardState) {
         currentPlayer = boardState.currentPlayer;
+        thisPlayerColor = boardState.thisPlayerColor;
         redPieces = boardState.redPieces;
         blackPieces = boardState.blackPieces;
         isMultiCapture = boardState.isMultiCapture || false;
@@ -200,14 +284,14 @@ function handleSquareClick(e) {
                 selectedPiece = null;
                 clearAvailableMoves();
             }
-        } else if (square.firstChild && square.firstChild.classList.contains('piece') && square.firstChild.classList.contains(currentPlayer)) {
+        } else if (square.firstChild && square.firstChild.classList.contains('piece') && square.firstChild.classList.contains(thisPlayerColor)) {
             if (!isMultiCapture || square.firstChild === multiCapturePiece) {
                 selectPiece(square.firstChild);
             }
         } else if (!square.firstChild && isValidMode(selectedPiece, row, col)) {
             movePiece(selectedPiece, row, col);
         }
-    } else if (square.firstChild && square.firstChild.classList.contains('piece') && square.firstChild.classList.contains(currentPlayer)) {
+    } else if (square.firstChild && square.firstChild.classList.contains('piece') && square.firstChild.classList.contains(thisPlayerColor)) {
         if (!isMultiCapture || square.firstChild === multiCapturePiece) {
             selectPiece(square.firstChild);
         }
@@ -218,6 +302,9 @@ function handleSquareClick(e) {
 function selectPiece(piece) {
     if(!connected){
         return;
+    }
+    if(currentPlayer != thisPlayerColor){
+        return
     }
     if (selectedPiece) {
         selectedPiece.classList.remove('selected');
@@ -351,6 +438,8 @@ function movePiece(piece, row, col) {
 // moves target piece to square and saves position
 function performMove(piece, targetSquare, row, col) {
     targetSquare.appendChild(piece);
+    lastCol=piece.dataset.col;
+    lastRow=piece.dataset.row;
     piece.dataset.row = row;
     piece.dataset.col = col;
     piece.classList.remove('selected');
@@ -360,7 +449,7 @@ function performMove(piece, targetSquare, row, col) {
     if ((row === 0 && currentPlayer === 'red') || (row === 7 && currentPlayer === 'black')) {
         piece.classList.add('king');
     }
-
+    socket.emit('move',String(lastCol)+String(lastRow)+String(col)+String(row)+gameID);
     checkWinCondition();
 }
 
@@ -460,12 +549,14 @@ function checkWinCondition() {
         showGameOverOverlay(blackPlayer, 'black', 'wins!');
         clearBoardState();
         endGame();
+        socket.emit('win',String(1)+gameID);
         return true;
     } else if (blackPieces === 0) {
         const { redPlayer } = getPlayerNames();
         showGameOverOverlay(redPlayer, 'red', 'wins!');
         clearBoardState();
         endGame();
+        socket.emit('win',String(2)+gameID);
         return true;
     }
     return false;
@@ -481,9 +572,11 @@ function endTurn() {
         const { redPlayer, blackPlayer } = getPlayerNames();
         const winner = currentPlayer === 'red' ? blackPlayer : redPlayer;
         const winnerColor = currentPlayer === 'red' ? 'black' : 'red';
+        const winnerNumber = currentPlayer === 'red' ? '1' : '2';
         showGameOverOverlay(winner, winnerColor, `wins! ${currentPlayer.charAt(0).toUpperCase() + currentPlayer.slice(1)} has no valid moves.`);
         clearBoardState();
         endGame();
+        socket.emit('win',String(winnerNumber)+gameID);
         return;
     }
     
@@ -508,6 +601,7 @@ function autoSelectIfCaptureAvailable() {
 
 function endGame() {
     board.style.pointerEvents = 'none';
+    won=1;
 }
 
 // Show game over overlay with winner message
@@ -534,6 +628,7 @@ function getBoardState() {
     return {
         pieces: pieces,
         currentPlayer: currentPlayer,
+        thisPlayerColor: thisPlayerColor,
         redPieces: redPieces,
         blackPieces: blackPieces,
         isMultiCapture: isMultiCapture
@@ -574,9 +669,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Get player names from URL parameters
 function getPlayerNames() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const redPlayer = urlParams.get('redPlayer') || 'Red';
-    const blackPlayer = urlParams.get('blackPlayer') || 'Black';
+
+    // const urlParams = new URLSearchParams(window.location.search);
+    const redPlayer = rP;
+    const blackPlayer = bP;
+    
     return { redPlayer, blackPlayer };
 }
 
@@ -593,14 +690,11 @@ function setPlayerNames() {
 
 // Clear saved state when starting a new game
 function startNewGame() {
-    clearBoardState();
-    currentPlayer = 'red';
-    redPieces = 12;
-    blackPieces = 12;
-    isMultiCapture = false;
-    multiCapturePiece = null;
-    selectedPiece = null;
-    board.style.pointerEvents = 'auto';
-    createBoard();
-    updateGameStatus();
+    if(thisPlayerColor=='red'){
+        socket.emit('win',String(1)+gameID);
+    }else{
+        socket.emit('win',String(2)+gameID);
+    }
+    window.location.href = url+"deleteGame";
+    return;
 };
